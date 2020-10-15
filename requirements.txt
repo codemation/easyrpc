@@ -1,0 +1,5 @@
+makefun
+fastapi
+uvicorn
+jwt
+websockets
