@@ -17,11 +17,11 @@ from typing import Callable
 def create_proxy_from_config(config: dict, proxy: Callable):
     """
     input:
-        `config` created by get_signature_as_dict() on function orgin
+        `config` created by get_signature_as_dict() on function origin
     
     Will be run on proxy host to create a function matching signature of 
-    orgin function and hides away the websocket rpc logic calling function
-    on orgin 
+    origin function and hides away the websocket rpc logic calling function
+    on origin 
     """
     if config['is_async']:
         async def __proxy__(**kwargs):
@@ -83,12 +83,12 @@ def get_signature_as_dict(f):
             pars_dict[par]['annotation'] = str(par_item._annotation)
     return {f.__name__: pars_dict}
 
-def get_orgin_register(obj: object):
+def get_origin_register(obj: object):
     """
     input:
         `obj` will be assigned .ws_rpcs dictionary 
         which will be used to store registered functions on
-        an orgin node
+        an origin node
     """
     obj.ws_rpcs = {}
     def register(f):
@@ -108,7 +108,7 @@ if __name__ == '__main__':
         pass
     s = Special()
 
-    register = get_orgin_register(s)
+    register = get_origin_register(s)
             
     @register
     def a(a: str, b: str, c: int = 0):

@@ -13,7 +13,8 @@ async def main():
 
     print(p.proxy_funcs)
 
-    help(p.proxy_funcs['good_func_c'])
+    good_func_c = p.proxy_funcs['good_func_c']
 
+    result = await good_func_c('a', 'b', 'c')
 asyncio.run(main())
         

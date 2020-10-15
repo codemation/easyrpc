@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from fastapi.websockets import WebSocket, WebSocketDisconnect
 
 from easyrpc.auth import encode, decode
-from easyrpc.orgin import Orgin
+from easyrpc.origin import Origin
 
 
 class ConnectionManager:
@@ -33,24 +33,24 @@ class EasyRpcServer:
     def __init__(
         self,
         server: FastAPI,    # Fast API Server
-        orgin_path: str, # path accessed to start WS connection /ws/my_orgin_paths
+        origin_path: str, # path accessed to start WS connection /ws/my_origin_paths
         server_secret: str, 
         encryption_enabled: bool = False,
         logger: logging.Logger = None,
         debug: bool = False
     ):
         self.server = server
-        self.orgin_path = orgin_path
+        self.origin_path = origin_path
         self.server_secret = server_secret
         self.encryption_enabled = encryption_enabled
         self.setup_logger(logger=logger, level='DEBUG' if debug else 'ERROR')
         self.connection_manager = ConnectionManager(self)
-        self.orgin = Orgin(self)
+        self.origin = Origin(self)
         self.setup_ws_server(server)
     async def create(
         cls,
         server: FastAPI,    # Fast API Server
-        orgin_path: str, # path accessed to start WS connection /ws/my_orgin_paths
+        origin_path: str, # path accessed to start WS connection /ws/my_origin_paths
         server_secret: str, 
         encryption_enabled: bool = False,
         logger: logging.Logger = None,
@@ -58,7 +58,7 @@ class EasyRpcServer:
     ):
         return cls(
             server,
-            orgin_path,
+            origin_path,
             server_secret,
             encryption_enabled,
             logger,
@@ -72,15 +72,15 @@ class EasyRpcServer:
                 format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
                 datefmt='%m-%d %H:%M'
             )
-            self.log = logging.getLogger(f'wsRpc-server {self.orgin_path}')
+            self.log = logging.getLogger(f'wsRpc-server {self.origin_path}')
             self.log.propogate = False
             self.log.setLevel(level)
     def setup_ws_server(self, server):
-        @server.websocket_route(self.orgin_path)
-        async def orgin(websocket: WebSocket):
+        @server.websocket_route(self.origin_path)
+        async def origin(websocket: WebSocket):
             # decode auth - determine if valid & add connection
             # add connection to connection manager
-            self.log.debug(f"orgin ws connection starting {websocket}")
+            self.log.debug(f"origin ws connection starting {websocket}")
             result = await self.connection_manager.connect(websocket)
 
             auth = await websocket.receive_json()
@@ -102,7 +102,7 @@ class EasyRpcServer:
             try:
                 while True:
                     request = await websocket.receive()
-                    self.log.debug(f"ORGIN - received request {request}")
+                    self.log.debug(f"ORIGIN - received request {request}")
 
                     if 'text' in request and request['text'] == 'ping':
                         await websocket.send_text("pong")
@@ -122,19 +122,19 @@ class EasyRpcServer:
                         )
                         continue
                     action = request['action']
-                    if not action in self.orgin:
+                    if not action in self.origin:
                         await websocket.send_json(
-                            {"error": f"no action {action} registered for orgin"}
+                            {"error": f"no action {action} registered for origin"}
                         )
                         continue
                     
-                    executed_action =  self.orgin.run(
+                    executed_action =  self.origin.run(
                         action,
                         request['args'] if 'args' in request else [],
                         request['kwargs'] if 'kwargs' in request else {},
                     )
-                    self.log.debug(f"ORGIN action: {self.orgin[action]['config']['name']}")
-                    if self.orgin[action]['config']['is_async']:
+                    self.log.debug(f"ORIGIN action: {self.origin[action]['config']['name']}")
+                    if self.origin[action]['config']['is_async']:
                         await websocket.send_json(
                             await executed_action
                         )

@@ -8,16 +8,16 @@ from easyrpc.auth import encode
 class EasyRpcProxy:
     def __init__(
         self,
-        orgin_host: str,
-        orgin_port: int,
-        orgin_path: str,
+        origin_host: str,
+        origin_port: int,
+        origin_path: str,
         server_secret: str,
         encryption_enabled = False,
         loop=None
     ):
-        self.orgin_host = orgin_host
-        self.orgin_port = orgin_port
-        self.orgin_path = orgin_path
+        self.origin_host = origin_host
+        self.origin_port = origin_port
+        self.origin_path = origin_path
         self.server_secret = server_secret
         self.encryption_enabled = encryption_enabled
 
@@ -32,27 +32,27 @@ class EasyRpcProxy:
         self.loop = asyncio.get_running_loop() if not loop else loop
 
         self.run_cron(
-            self.get_orgin_registered_functions,
+            self.get_origin_registered_functions,
             60
         )
     @classmethod
     async def create(cls,         
-        orgin_host: str,
-        orgin_port: int,
-        orgin_path: str,
+        origin_host: str,
+        origin_port: int,
+        origin_path: str,
         server_secret: str,
         encryption_enabled = False,
         loop=None
     ):
         proxy = cls(
-            orgin_host, 
-            orgin_port, 
-            orgin_path,
+            origin_host, 
+            origin_port, 
+            origin_path,
             server_secret,
             encryption_enabled,
             loop=loop
         )
-        await proxy.get_orgin_registered_functions()
+        await proxy.get_origin_registered_functions()
         return proxy
 
     def run_cron(self, action, interval):
@@ -81,7 +81,7 @@ class EasyRpcProxy:
             self.log.propogate = False
             self.log.setLevel(level)
 
-    async def get_orgin_registered_functions(self):
+    async def get_origin_registered_functions(self):
         # issue action 'get_registered_functions'
         config = await self.make_proxy_request({'action': 'get_registered_functions'})
         for func in config['funcs']:
@@ -131,7 +131,7 @@ class EasyRpcProxy:
         async def ws_client():
             encoded_id = encode(self.server_secret, **{'id': self.session_id})
             session = await self.get_endpoint_sessions(self.session_id)
-            url = f"http://{self.orgin_host}:{self.orgin_port}{self.orgin_path}"
+            url = f"http://{self.origin_host}:{self.origin_port}{self.origin_path}"
             async with session.ws_connect(
                 url #timeout=600, heartbeat=120.0
                 ) as ws:

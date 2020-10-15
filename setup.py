@@ -3,7 +3,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 setuptools.setup(
      name='easyrpc',  
-     version='PYQLVERSION',
+     version='0.001',
      packages=setuptools.find_packages(include=['easyrpc'], exclude=['build']),
      author="Joshua Jamison",
      author_email="joshjamison1@gmail.com",

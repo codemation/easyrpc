@@ -1,14 +1,14 @@
 from easyrpc.register import ( 
-    get_orgin_register,
+    get_origin_register,
     get_signature_as_dict   
 )
-class Orgin:
+class Origin:
     def __init__(self, obj: object):
         self.obj = obj
-        self._register = get_orgin_register(obj)
+        self._register = get_origin_register(obj)
         self(self.get_registered_functions)
     def __call__(self, func):
-        self.obj.log.warning(f"ORGIN - registered function {func.__name__} ")
+        self.obj.log.warning(f"ORIGIN - registered function {func.__name__} ")
         return self._register(func)
     def __contains__(self, func):
         return func in self.obj.ws_rpcs

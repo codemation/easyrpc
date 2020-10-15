@@ -30,7 +30,7 @@ Easily share functions between hosts, processes, containers without the complexi
 
     ws_server_a = EasyRpcServer(server, '/ws/server_a', server_secret='abcd1234')
 
-    @ws_server_a.orgin
+    @ws_server_a.origin
     def good_func_a(a, b, c):
         print(f"good_func_a {a} {b} {c}")
         return {"good_func_a": [a, b, c]}
@@ -64,21 +64,21 @@ Easily share functions between hosts, processes, containers without the complexi
 
     ws_server_b = EasyRpcServer(server, '/ws/server_b', server_secret='abcd1234')
 
-    @ws_server_a.orgin
+    @ws_server_a.origin
     def good_func_a(a, b, c):
         print(f"good_func_a {a} {b} {c}")
         return {"good_func_a": [a, b, c]}
 
-    @ws_server_b.orgin
+    @ws_server_b.origin
     def good_func_b(a, b, c):
         print(f"good_func_b {a} {b} {c}")
         return {"good_func_b": [a, b, c]}
 
-    # Registered to both EasyRpcServer servers
+    # Register to both EasyRpcServer servers
     # availabe for both /ws/server_a & /ws/server_b proxies
 
-    @ws_server_a.orgin
-    @ws_server_b.orgin
+    @ws_server_a.origin
+    @ws_server_b.origin
     def good_func_c(a, **kw):
         print(f"good_func_c {a} {kw}")
         return {"good_func_c": [a, kw]}
@@ -107,12 +107,12 @@ Output:
 
     # Start server
     (easy-rpc-env)$ uvicorn --host 0.0.0.0 --port 8090 test_server:server
-    10-14 23:18 wsRpc-server /ws/server_a WARNING  ORGIN - registered function get_registered_functions 
-    10-14 23:18 wsRpc-server /ws/server_b WARNING  ORGIN - registered function get_registered_functions 
-    10-14 23:18 wsRpc-server /ws/server_a WARNING  ORGIN - registered function good_func_a 
-    10-14 23:18 wsRpc-server /ws/server_b WARNING  ORGIN - registered function good_func_b 
-    10-14 23:18 wsRpc-server /ws/server_b WARNING  ORGIN - registered function good_func_c 
-    10-14 23:18 wsRpc-server /ws/server_a WARNING  ORGIN - registered function good_func_c 
+    10-14 23:18 wsRpc-server /ws/server_a WARNING  ORIGIN - registered function get_registered_functions 
+    10-14 23:18 wsRpc-server /ws/server_b WARNING  ORIGIN - registered function get_registered_functions 
+    10-14 23:18 wsRpc-server /ws/server_a WARNING  ORIGIN - registered function good_func_a 
+    10-14 23:18 wsRpc-server /ws/server_b WARNING  ORIGIN - registered function good_func_b 
+    10-14 23:18 wsRpc-server /ws/server_b WARNING  ORIGIN - registered function good_func_c 
+    10-14 23:18 wsRpc-server /ws/server_a WARNING  ORIGIN - registered function good_func_c 
     INFO:     ('127.0.0.1', 57406) - "WebSocket /ws/server_a" [accepted]
     10-14 23:36 uvicorn.error INFO     ('127.0.0.1', 57406) - "WebSocket /ws/server_a" [accepted]
     10-14 23:36 wsRpc-server /ws/server_a WARNING  created websocket connection with endpoint 44d87c38-0e65-11eb-8ae3-2f2bf6388831
@@ -141,9 +141,9 @@ A Helpful look at proxy signature
 
 
 ## Under the hood 
-easyrpc is made easy via the amazing [fastapi](https://github.com/tiangolo/fastapi) framework for handling server side websocket communciation, [aiohttp](https://github.com/aio-libs/aiohttp) for the client-side websocket communication,  [makefun](https://github.com/smarie/python-makefun) along with some standard library 'inspect' magic  for translating orgin functions into remote-useable functions with parameter validation, and lastly [pyjwt](https://github.com/jpadilla/pyjwt) for authentication & encryption.
+easyrpc is made easy via the amazing [fastapi](https://github.com/tiangolo/fastapi) framework for handling server side websocket communciation, [aiohttp](https://github.com/aio-libs/aiohttp) for the client-side websocket communication,  [makefun](https://github.com/smarie/python-makefun) along with some standard library 'inspect' magic  for translating origin functions into remote-useable functions with parameter validation, and lastly [pyjwt](https://github.com/jpadilla/pyjwt) for authentication & encryption.
 
-Registered functions are made available as callables which return co-routines and thus 'awaitable' to the remote-endpoints, this is true for both async and non-async registered functions. Due to this, the functions must be awaited within a running event_loop. When called, the input parameters are verified via the orgin functions signature. 
+Registered functions are made available as callables which return co-routines and thus 'awaitable' to the remote-endpoints, this is true for both async and non-async registered functions. Due to this, the functions must be awaited within a running event_loop. When called, the input parameters are verified via the origin functions signature. 
 
 ## Supported Functions Features
 - async def & def
