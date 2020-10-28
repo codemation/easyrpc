@@ -11,5 +11,5 @@ if __name__=='__main__':
     if '(' in version and ')' in version:
         right_i = version.index('(')
         left_i = version.index(')')
-        version = version[right_i+1:left_i]
+        version = version[right_i+2:left_i-1]
         print(f"{float(version)+0.001:.3f}")
