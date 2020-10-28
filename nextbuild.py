@@ -9,5 +9,7 @@ if __name__=='__main__':
     import sys
     version = sys.stdin.readline().rstrip()
     if '(' in version and ')' in version:
-        version = version[2:7]
+        right_i = version.index('(')
+        left_i = version.index(')')
+        version = version[right_i+1:left_i]
         print(f"{float(version)+0.001:.3f}")
