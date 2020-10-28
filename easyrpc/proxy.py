@@ -2,6 +2,7 @@ import asyncio
 from aiohttp import ClientSession
 import uuid, time
 import logging
+from concurrent.futures._base import CancelledError
 from easyrpc.register import create_proxy_from_config
 from easyrpc.auth import encode
 
@@ -63,7 +64,8 @@ class EasyRpcProxy:
                     await asyncio.sleep(interval)
                     await action()
                 except Exception as e:
-                    self.log.exception(f"exceptoin running cron job for {action.__name__}")
+                    if not isinstance(e, CancelledError):
+                        self.log.exception(f"exceptoin running cron job for {action.__name__}")
                     break
             self.run_cron(action, interval)
             
@@ -155,7 +157,8 @@ class EasyRpcProxy:
                                 last_ping = time.time()
                             await asyncio.sleep(3)
                     except Exception as e:
-                        self.log.exception(f"keep alive exiting")
+                        if not isinstance(e, CancelledError):
+                            self.log.exception(f"keep alive exiting")
                 await ws.send_json({'auth': encoded_id})
                 loop = asyncio.get_event_loop()
                 loop.create_task(keep_alive())
