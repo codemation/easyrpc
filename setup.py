@@ -3,7 +3,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 setuptools.setup(
      name='easyrpc',  
-     version='0.001',
+     version='PYQLVERSION',
      packages=setuptools.find_packages(include=['easyrpc'], exclude=['build']),
      author="Joshua Jamison",
      author_email="joshjamison1@gmail.com",
@@ -17,5 +17,5 @@ setuptools.setup(
          "Operating System :: OS Independent",
      ],
      python_requires='>=3.7, <4',   
-     install_requires=['makefun', 'jwt', 'fastapi', 'uvicorn', 'websockets', 'aiohttp'],
+     install_requires=['makefun', 'pyjwt', 'fastapi', 'uvicorn', 'websockets', 'aiohttp'],
  )
