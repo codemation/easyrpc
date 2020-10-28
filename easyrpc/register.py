@@ -16,7 +16,10 @@ from typing import Callable
 
 async def coro():
     pass
-Coroutine = type(coro())
+c = coro()
+Coroutine = type(c)
+c.close()
+
 
 
 def create_proxy_from_config(config: dict, proxy: Callable):
