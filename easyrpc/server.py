@@ -7,7 +7,7 @@ from fastapi.websockets import WebSocket, WebSocketDisconnect
 
 from easyrpc.auth import encode, decode
 from easyrpc.origin import Origin
-
+from easyrpc.register import Coroutine
 
 class ConnectionManager:
     def __init__(self, server):
@@ -134,6 +134,16 @@ class EasyRpcServer:
                         request['kwargs'] if 'kwargs' in request else {},
                     )
                     self.log.debug(f"ORIGIN action: {self.origin[action]['config']['name']}")
+
+                    if isinstance(executed_action, Coroutine):
+                        await websocket.send_json(
+                            await executed_action
+                        )
+                    else:
+                        await websocket.send_json(
+                                executed_action
+                            )
+                    """
                     if self.origin[action]['config']['is_async']:
                         await websocket.send_json(
                             await executed_action
@@ -142,5 +152,6 @@ class EasyRpcServer:
                         await websocket.send_json(
                             executed_action
                         )
+                    """
             except WebSocketDisconnect:
                 self.connection_manager.disconnect(decoded_id)
