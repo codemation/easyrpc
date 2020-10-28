@@ -14,6 +14,11 @@ from collections import OrderedDict
 from makefun import create_function
 from typing import Callable
 
+async def coro():
+    pass
+Coroutine = type(coro())
+
+
 def create_proxy_from_config(config: dict, proxy: Callable):
     """
     input:
@@ -23,12 +28,19 @@ def create_proxy_from_config(config: dict, proxy: Callable):
     origin function and hides away the websocket rpc logic calling function
     on origin 
     """
+    async def __proxy__(**kwargs):
+        result = proxy(**kwargs)
+        if isinstance(result, Coroutine):
+            return await result
+        return result
+    """
     if config['is_async']:
         async def __proxy__(**kwargs):
             return await proxy(**kwargs)
     else:
         def __proxy__(**kwargs):
             return proxy(**kwargs)
+    """
     __proxy__.__name__ = f"{config['name']}_proxy"
     nf = create_function(
         create_signature_from_dict(
