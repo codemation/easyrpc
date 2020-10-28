@@ -153,7 +153,7 @@ class EasyRpcProxy:
                                 except Exception as e:
                                     self.receive_locked = False
                                     raise e
-                                self.log.warning(f" keep alive receive {result}")
+                                self.log.warning(f"keep alive receive {result}")
                                 last_ping = time.time()
                             await asyncio.sleep(3)
                     except Exception as e:
