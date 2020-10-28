@@ -1,5 +1,5 @@
 makefun
 fastapi
 uvicorn
-jwt
+pyjwt
 websockets
