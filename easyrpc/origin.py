@@ -2,35 +2,42 @@ from easyrpc.register import (
     get_origin_register,
     get_signature_as_dict   
 )
+
+
 class Origin:
     def __init__(self, obj: object):
         self.obj = obj
         self._register = get_origin_register(obj)
-        self(self.get_registered_functions)
-    def __call__(self, func):
-        self.obj.log.warning(f"ORIGIN - registered function {func.__name__} ")
-        return self._register(func)
-    def __contains__(self, func):
-        return func in self.obj.ws_rpcs
-    def __getitem__(self, func):
-        if func in self:
-            return self.obj.ws_rpcs[func]
-    def __iter__(self):
-        def get_config():
-            for f in self.obj.ws_rpcs:
-                yield {f: self.obj.ws_rpcs[f]['config']}
-        return get_config()
-    def run(self, func, args=[], kwargs={}):
+
+    def __call__(self, func=None, namespace='DEFAULT'):
+        """
+        used to register function with a defined namespace
+        """
+        def register_in_namespace(func):
+            namespaces = [namespace]
+            if self.obj.kind == 'SERVER' and namespace in self.obj.namespace_groups:
+                namespaces = list(self.obj.namespace_groups[namespace])
+            for n_space in namespaces:
+                self.obj.log.warning(f"ORIGIN - registered function {func.__name__} in {n_space} namespace")
+                function = self._register(func, namespace=n_space)
+            return function
+        if not func:
+            return register_in_namespace
+        else:
+            return register_in_namespace(func)
+
+    def run(self, namespace, func, args=[], kwargs={}):
         """
         returns function called with given args & kwargs
         if type async, returns coroutine that should be awaited
         """
-        if func in self:
-            return self[func]['method'](
-                *args,
-                **kwargs
-            )
+        if namespace in self.obj.namespaces:
+            if func in self.obj.namespaces[namespace]:
+                return self.obj.namespaces[namespace][func]['method'](
+                    *args,
+                    **kwargs
+                )
         return None
-    def get_registered_functions(self):
-        return {'funcs': [func for func in self]}
+    def get_registered_functions(self, namespace='DEFAULT'):
+        return {'funcs': [{f: self.obj.namespace[f][config]} for f in self.obj.namespace]}
 

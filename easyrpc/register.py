@@ -9,16 +9,25 @@ from inspect import (
     _PARAM_NAME_MAPPING,
     iscoroutinefunction
 )
-
+from copy import deepcopy
 from collections import OrderedDict
 from makefun import create_function
 from typing import Callable
 
 async def coro():
     pass
+async def async_gen():
+    yield None
 c = coro()
 Coroutine = type(c)
+
 c.close()
+Generator = type(i for i in ())
+
+ag = async_gen()
+AsyncGenerator = type(ag)
+async_generator_asend = type(ag.asend(None))
+
 
 
 
@@ -36,15 +45,9 @@ def create_proxy_from_config(config: dict, proxy: Callable):
         if isinstance(result, Coroutine):
             return await result
         return result
-    """
-    if config['is_async']:
-        async def __proxy__(**kwargs):
-            return await proxy(**kwargs)
-    else:
-        def __proxy__(**kwargs):
-            return proxy(**kwargs)
-    """
-    __proxy__.__name__ = f"{config['name']}_proxy"
+
+    #__proxy__.__name__ = f"{config['name']}_proxy"
+    __proxy__.__name__ = f"{config['name']}"
     nf = create_function(
         create_signature_from_dict(
             config['sig']
@@ -53,11 +56,13 @@ def create_proxy_from_config(config: dict, proxy: Callable):
     )
 
     return nf
-def create_signature_from_dict(sig_dict: dict):
+def create_signature_from_dict(func_sig: dict):
     """
     contstruct a function signature from dict
     config, created via get_signature_as_dict
     """
+    sig_dict = deepcopy(func_sig)
+
     params_od = OrderedDict()
     for k in list(sig_dict.keys()):
         for pk in list(sig_dict[k].keys()):
@@ -101,19 +106,21 @@ def get_signature_as_dict(f):
 def get_origin_register(obj: object):
     """
     input:
-        `obj` will be assigned .ws_rpcs dictionary 
+        `obj` will be assigned .namespace dictionary 
         which will be used to store registered functions on
         an origin node
     """
-    obj.ws_rpcs = {}
-    def register(f):
-        obj.ws_rpcs[f.__name__] = {}
-        obj.ws_rpcs[f.__name__]['config'] = {
-            'sig': get_signature_as_dict(f),
-            'name': f.__name__,
-            'is_async': iscoroutinefunction(f)
-        }
-        obj.ws_rpcs[f.__name__]['method'] = f
+    def register(f, namespace):
+        if not namespace in obj.namespaces:
+            obj.namespaces[namespace] = {}
+        if not f.__name__ in obj.namespaces[namespace]:
+            obj.namespaces[namespace][f.__name__] = {}
+            obj.namespaces[namespace][f.__name__]['config'] = {
+                'sig': get_signature_as_dict(f),
+                'name': f.__name__,
+                'is_async': iscoroutinefunction(f)
+            }
+            obj.namespaces[namespace][f.__name__]['method'] = f
         return f
     return register
 
