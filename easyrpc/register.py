@@ -40,8 +40,8 @@ def create_proxy_from_config(config: dict, proxy: Callable):
     origin function and hides away the websocket rpc logic calling function
     on origin 
     """
-    async def __proxy__(**kwargs):
-        result = proxy(**kwargs)
+    async def __proxy__(*args, **kwargs):
+        result = proxy(*args, **kwargs)
         if isinstance(result, Coroutine):
             return await result
         return result

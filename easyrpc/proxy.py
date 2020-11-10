@@ -550,10 +550,11 @@ class EasyRpcProxy:
 
 
 def get_proxy(ws_proxy: EasyRpcProxy, func_name: str):
-    async def proxy(**kwargs):
+    async def proxy(*args, **kwargs):
         return await ws_proxy.proxy_request(
             {
                 'action': func_name,
+                'args': list(args),
                 'kwargs': kwargs
             }
         )
