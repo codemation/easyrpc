@@ -54,7 +54,12 @@ Easily share functions between hosts, processes, containers without the complexi
         print(result)
 
     asyncio.run(main())
-
+## Recipies
+See other usage examples in [recipies](https://github.com/codemation/easyrpc/tree/main/recipies)
+- [basic](https://github.com/codemation/easyrpc/tree/main/recipies/basic)
+- [clusters](https://github.com/codemation/easyrpc/tree/main/recipies/clusters)
+- [FastAPI-Shared-Database](https://github.com/codemation/easyrpc/tree/main/recipies/fastapi/shared_database)
+- [Generators](https://github.com/codemation/easyrpc/tree/main/recipies/generators)
 
 ## Usage with multiple namespaces
 
