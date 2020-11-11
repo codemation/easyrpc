@@ -73,7 +73,8 @@ class EasyRpcServer:
         self.reverse_proxies = set()
 
         self.server_id = str(uuid.uuid1())
-
+        
+    @classmethod
     async def create(
         cls,
         server: FastAPI,    # Fast API Server
