@@ -535,6 +535,9 @@ class EasyRpcProxy:
             if response_expected:
                 #self.log.debug(f"proxy_request: waiting for result")
                 result =  await self.requests[request_id].get()
+                if not result:
+                    return result
+
                 if 'GENERATOR_START' in result:
                     generator_id = result['GENERATOR_START']
                     proxy_generator = await self.proxy_generator(request_id, generator_id)

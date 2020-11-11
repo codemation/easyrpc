@@ -73,7 +73,7 @@ class EasyRpcServer:
         self.reverse_proxies = set()
 
         self.server_id = str(uuid.uuid1())
-        
+
     @classmethod
     async def create(
         cls,
@@ -402,8 +402,10 @@ class EasyRpcServer:
 
 
             if response_expected:
-                result = await self.server_requests[request_id].get()
                 self.log.debug(f"server_request: result {result}")
+                result = await self.server_requests[request_id].get()
+                if not result:
+                    return result
                 if 'GENERATOR_START' in result:
                     generator_id = result['GENERATOR_START']
                     await self.server_generator(client_id, request_id, generator_id)
