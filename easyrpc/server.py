@@ -286,8 +286,11 @@ class EasyRpcServer:
                                 if type(executed_action) in {Coroutine, async_generator_asend}:
                                     try:
                                         response = await executed_action
-                                    except StopAsyncIteration as e:
-                                        response = 'GENERATOR_END'
+                                    except Exception as e:
+                                        if isinstance(e, StopAsyncIteration):
+                                            response = 'GENERATOR_END'
+                                        else:
+                                            response = repr(e)
                                 elif type(executed_action) in {Generator, AsyncGenerator}:
                                     self.server_generators[request_id] = RpcGenerator(
                                         executed_action
