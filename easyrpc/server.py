@@ -77,7 +77,7 @@ class EasyRpcServer:
     @classmethod
     async def create(
         cls,
-        server: FastAPI,    # Fast API Server
+        server: FastAPI,  # Fast API Server
         origin_path: str, # path accessed to start WS connection /ws/my_origin_paths
         server_secret: str, 
         encryption_enabled: bool = False,
@@ -422,10 +422,14 @@ class EasyRpcServer:
         """
         if namespace in self.namespaces or namespace in self.namespace_groups:
             if func in self[namespace]:
-                return self[namespace][func](
-                    *args,
-                    **kwargs
-                )
+                try:
+                    return self[namespace][func](
+                        *args,
+                        **kwargs
+                    )
+                except Exception as e:
+                    self.log.exception(f'error running {func}')
+                    return repr(e)
         return None
     def get_parent_registered_functions(self, namespace, cfg='config', trigger=None):
         self.log.debug(f"get_parent_registered_functions: ns {namespace} ser_proxies: {self.server_proxies} rev_proxies: {self.reverse_proxies}")
