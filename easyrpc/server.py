@@ -10,7 +10,7 @@ from fastapi.websockets import WebSocket, WebSocketDisconnect
 from easyrpc.auth import encode, decode
 from easyrpc.origin import Origin
 from easyrpc.register import Coroutine, Generator, AsyncGenerator, async_generator_asend
-from easyrpc.proxy import EasyRpcProxy
+from easyrpc.proxy import EasyRpcProxy, EasyRpcProxyLogger
 from easyrpc.generator import RpcGenerator
 
 
@@ -92,6 +92,42 @@ class EasyRpcServer:
             logger,
             debug
         )
+    async def create_server_proxy_logger(
+        self,
+        origin_host: str = None,
+        origin_port: int = None,
+        origin_path: str = None,
+        origin_id: str = None,
+        session_id: str = None,
+        server_secret: str = None,
+        namespace: str = 'DEFAULT',
+        response_expected: bool = False,
+        encryption_enabled: bool = False,
+        ssl_verify: bool = True,
+    ):
+        if not namespace in self.server_proxies:
+            if not namespace in self.namespace_groups:
+                self.server_proxies[namespace] = {}
+        proxy_logger = await EasyRpcProxyLogger.create(
+            origin_host, 
+            origin_port,
+            origin_path,
+            origin_id,
+            session_id,
+            server_secret,
+            namespace,
+            'PROXY',
+            response_expected,
+            encryption_enabled,
+            server=self,
+            ssl_verify=ssl_verify
+        )
+        namespaces = [namespace] if not namespace in self.namespace_groups else list(self.namespace_groups[namespace])
+        for n_space in namespaces:
+            self.server_proxies[n_space][proxy_logger.session_id] = proxy_logger
+        return proxy_logger
+
+        
     async def create_server_proxy(
         self,
         origin_host: str = None,
@@ -102,8 +138,10 @@ class EasyRpcServer:
         server_secret: str = None,
         namespace: str = 'DEFAULT',
         proxy_type: str = 'SERVER',
+        response_expected: bool = True,
         encryption_enabled = False,
-        server = None
+        server = None,
+        ssl_verify: bool = True
     ):
         if not namespace in self.server_proxies:
             if not namespace in self.namespace_groups:
@@ -121,8 +159,10 @@ class EasyRpcServer:
             server_secret,
             namespace,
             proxy_type,
+            response_expected,
             encryption_enabled,
-            server=self
+            server=self,
+            ssl_verify=ssl_verify
         )
         if proxy_type == 'SERVER':
             self.server_proxies[namespace]['parent'] = new_proxy
@@ -145,7 +185,31 @@ class EasyRpcServer:
             if not namespace in self.namespaces:
                 self.namespaces[namespace] = {}
         self.namespace_groups[group_name] = set(namespaces)
+    def register_logger(self, logger: logging.Logger, namespace: str):
+
+        @self.origin(namespace=namespace)
+        def info(message):
+            logger.info(message)
         
+        @self.origin(namespace=namespace)
+        def warning(message):
+            logger.warning(message)
+
+        @self.origin(namespace=namespace)
+        def error(message):
+            logger.error(message)
+
+        @self.origin(namespace=namespace)
+        def debug(message):
+            logger.debug(message)
+        
+        @self.origin(namespace=namespace)
+        def exception(message, traceback):
+            try:
+                raise Exception(traceback)
+            except Exception:
+                logger.exception(message)
+
     def setup_logger(self, logger=None, level=None):
         if logger == None:
             level = logging.DEBUG if level == 'DEBUG' else logging.WARNING
