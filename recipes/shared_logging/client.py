@@ -1,40 +1,16 @@
-# client.py
-import asyncio, traceback
-from easyrpc.proxy import EasyRpcProxy
-
-class EasyRpcProxyLogger(EasyRpcProxy):
-    async def info(self, message):
-        await self['info'](message)
-    async def warning(self, message):
-        await self['warning'](message)
-    async def error(self, message):
-        await self['error'](message)
-    async def debugger(self, message):
-        await self['debug'](message)
-    async def exception(self, message):
-        stack_trace = traceback.format_exc()
-        await self['exception'](message, stack_trace)
-
-
+# share logging with a basic client
+import aysncio
+from easyrpc.proxy import EasyRpcProxyLogger
 
 async def main():
+
     logger = await EasyRpcProxyLogger.create(
         '0.0.0.0', 
         8220, 
-        '/ws/logger', 
-        server_secret='abcd1234',
+        '/ws/server', 
+        server_secret='abcd1234', 
         namespace='logger'
     )
+    await logger.warning(f"client - started from {logger.session_id}")
 
-    await logger.warning(f"Logger starting from {logger.session_id}")
-
-    try:
-        d = {}
-        d['a'] == 'invalid'
-    except Exception:
-        await logger.exception(f"error applying value to {d}")
-
-
-
-
-asyncio.run(main())
+aysncio.run(main())
