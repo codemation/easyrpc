@@ -204,6 +204,77 @@ Like registered functions, normal generators are converted into async generators
                 
     asyncio.run(main())
 
+## Loggers
+easyrpc can be used to share existing python standard library logger with proxy or server proxys and centralize logging to one location
+<br>
+
+Poxies created as EasyRpcProxyLogger inhert the standard logging. 
+
+    Logger methods [info, warning, error, debug, exception],  exception includes full stack traces
+
+As with all proxied functions, each should be awaited
+
+<br>
+
+    # central logging server
+
+    import logging
+    from fastapi import FastAPI
+    from easyrpc.server import EasyRpcServer
+
+    logging.basicConfig()
+
+    server = FastAPI()
+
+    @server.on_event('startup')
+    async def setup():
+
+        logger = logging.getLogger()
+
+        rpc_server = EasyRpcServer(server, '/ws/server', server_secret='abcd1234', debug=True)
+
+        rpc_server.register_logger(logger, namespace='logger')
+<br>
+
+    # share logging with a basic client
+    import aysncio
+    from easyrpc.proxy import EasyRpcProxyLogger
+
+    async def main():
+
+        logger = await EasyRpcProxyLogger.create(
+            '0.0.0.0', 
+            8220, 
+            '/ws/server', 
+            server_secret='abcd1234', 
+            namespace='logger'
+        )
+        await logger.warning(f"client - started from {logger.session_id}")
+
+    aysncio.run(main())
+
+<br>
+
+    # share logging with another server
+
+    from fastapi import FastAPI
+    from easyrpc.server import EasyRpcServer
+
+    server = FastAPI()
+
+    @server.on_event('startup')
+    async def setup():
+        #server
+        ws_server_b = EasyRpcServer(server, '/ws/server', server_secret='efgh1234')
+
+        logger = await ws_server_b.create_server_proxy_logger(
+            '0.0.0.0', 8220, '/ws/server', server_secret='abcd1234', namespace='logger'
+        )
+
+        await logger.error(f"ws_server_b - starting with id {ws_server_b.server_id}")
+
+
+
 ## Clustering / EasyRpcServer Chaining / Namespacing 
 An EasyRpcServer can register functions in multiple namespaces, if unspecified 'Default' is used. 
 <br>
@@ -487,6 +558,6 @@ Registered functions are made available as callables which return co-routines an
 ## Common Use Cases
 - State sharing among forked workers 
 - Shared Database connections / cache 
-- Shared Queues 
+- Shared Queues
 - Worker Pooling - Easy centralization for workers and distribution of work.  
 - Function Chaining
