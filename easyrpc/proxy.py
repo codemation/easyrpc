@@ -1,6 +1,7 @@
 import uuid, time, json
 import logging
 import asyncio
+from traceback import format_exc 
 from concurrent.futures._base import CancelledError
 
 from aiohttp import ClientSession
@@ -26,11 +27,13 @@ class EasyRpcProxy:
         server_secret: str = None,
         namespace: str = 'DEFAULT',
         proxy_type: str = 'PROXY', # PROXY | SERVER_PROXY | SERVER
+        response_expected: bool = True,
         encryption_enabled: bool = False,
         server = None, #EasyRpcServer
         loop=None,
         logger: logging.Logger = None,
-        debug: bool = False
+        debug: bool = False,
+        ssl_verify: bool = True,
     ):
         self.kind = 'PROXY'
         self.loop = asyncio.get_running_loop() if not loop else loop
@@ -42,7 +45,9 @@ class EasyRpcProxy:
         self.server_secret = server_secret
         self.namespace = namespace
         self.proxy_type = proxy_type
+        self.response_expected = response_expected
         self.encryption_enabled = encryption_enabled
+        self.ssl_verify = ssl_verify
 
         # reference to local EasyRpcServer 
         self.server = server
@@ -98,10 +103,12 @@ class EasyRpcProxy:
         server_secret: str = None,
         namespace: str = 'DEFAULT',
         proxy_type: str = 'PROXY',
+        response_expected: bool = True,
         encryption_enabled = False,
         server = None,
         loop=None,
         debug: bool = False,
+        ssl_verify: bool = True,
     ):
         proxy = cls(
             origin_host, 
@@ -112,10 +119,12 @@ class EasyRpcProxy:
             server_secret,
             namespace,
             proxy_type,
+            response_expected,
             encryption_enabled,
             server=server,
             loop=loop,
-            debug=debug
+            debug=debug,
+            ssl_verify=ssl_verify,
         )
         """
         proxy_type:
@@ -271,10 +280,15 @@ class EasyRpcProxy:
                 }
             setup = encode(self.server_secret, **setup)
             session = await self.get_endpoint_sessions()
-            url = f"http://{self.origin_host}:{self.origin_port}{self.origin_path}"
+
+            if 'http' in self.origin_host:
+                url = f"{self.origin_host}:{self.origin_port}{self.origin_path}"
+            else:
+                url = f"http://{self.origin_host}:{self.origin_port}{self.origin_path}"
 
             async with session.ws_connect(
-                url #timeout=600, heartbeat=120.0
+                    url, #timeout=600, heartbeat=120.0
+                    ssl=self.ssl_verify
                 ) as ws:
                 async def ws_sender():
                     try:
@@ -559,6 +573,27 @@ def get_proxy(ws_proxy: EasyRpcProxy, func_name: str):
                 'action': func_name,
                 'args': list(args),
                 'kwargs': kwargs
-            }
+            },
+            response_expected=ws_proxy.response_expected
         )
     return proxy
+
+
+class EasyRpcProxyLogger(EasyRpcProxy):
+
+    def __init__(self, *args, **kwargs):
+        args = list(args)
+        args[8] = False
+        super().__init__(*args, **kwargs)
+
+    async def info(self, message):
+        await self['info'](message)
+    async def warning(self, message):
+        await self['warning'](message)
+    async def error(self, message):
+        await self['error'](message)
+    async def debugger(self, message):
+        await self['debug'](message)
+    async def exception(self, message):
+        stack_trace = format_exc()
+        await self['exception'](message, stack_trace)
