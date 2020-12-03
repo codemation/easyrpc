@@ -10,9 +10,9 @@ from fastapi.websockets import WebSocket, WebSocketDisconnect
 from easyrpc.auth import encode, decode
 from easyrpc.origin import Origin
 from easyrpc.register import Coroutine, Generator, AsyncGenerator, async_generator_asend
-from easyrpc.proxy import EasyRpcProxy, EasyRpcProxyLogger
+from easyrpc.proxy import EasyRpcProxy
+from easyrpc.tools.logger import EasyRpcProxyLogger
 from easyrpc.generator import RpcGenerator
-
 
 class ConnectionManager:
     def __init__(self, server):
