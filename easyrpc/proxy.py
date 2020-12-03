@@ -577,23 +577,3 @@ def get_proxy(ws_proxy: EasyRpcProxy, func_name: str):
             response_expected=ws_proxy.response_expected
         )
     return proxy
-
-
-class EasyRpcProxyLogger(EasyRpcProxy):
-
-    def __init__(self, *args, **kwargs):
-        args = list(args)
-        args[8] = False
-        super().__init__(*args, **kwargs)
-
-    async def info(self, message):
-        await self['info'](message)
-    async def warning(self, message):
-        await self['warning'](message)
-    async def error(self, message):
-        await self['error'](message)
-    async def debugger(self, message):
-        await self['debug'](message)
-    async def exception(self, message):
-        stack_trace = format_exc()
-        await self['exception'](message, stack_trace)
