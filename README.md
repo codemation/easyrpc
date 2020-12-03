@@ -238,7 +238,7 @@ As with all proxied functions, each should be awaited
 
     # share logging with a basic client
     import aysncio
-    from easyrpc.proxy import EasyRpcProxyLogger
+    from easyrpc.tools.logger import EasyRpcProxyLogger
 
     async def main():
 
@@ -273,11 +273,112 @@ As with all proxied functions, each should be awaited
 
         await logger.error(f"ws_server_b - starting with id {ws_server_b.server_id}")
 
+## Shared Database conection
+Database connections, table model logic & querries can be shared via easyrpc framework
+<br>
+
+#### Without easyrpc:
+- Apps that needs to access and store data in a database needs a separate connection / connectoin logic / table definitions 
+- Caching can only be used if ONE-AND-ONLY-ONE process ever accesses a database.
+
+#### With easyrpc:
+- Multiple Apps can access and use the same single database connection 
+- Shared database connection allows for caching requests since cache can be created / updated / invalidated from a single process.
+
+### Examples:  
+- [FastAPI-Shared-Database](https://github.com/codemation/easyrpc/tree/main/recipes/fastapi/shared_database)
+
+### Templates:
+- [aiopyql-rest-endpoint](https://github.com/codemation/aiopyql-rpc-endpoint) - Quickly start a sqlite / mysql / postgres connected aiopyql easyrpc endpoint, which can be connected using an EasyRpcProxyDatabase()
+
+## EasyRpcProxyDatabase
+- EasyRpcProxyDatabase provides remote functionality to an [aiopyql](https://github.com/codemation/aiopyql) connected database, to create tables, access, update, delete, and query data. 
+- All applications connected via the EasyRpcProxyDatabase() to the database namespace, share access to new & existing tables, query cache. 
+
+## Example: 
+
+Shared aiopyql database & EasyRpcProxyDatabase
+
+     # Start an aiopyql-rest-endpoint instance
+
+    $ mkdir dbtest
+
+    $ docker run -d --name aiopyql-testdb \
+        -p 8190:8190 \
+        -e DB_TYPE='sqlite' \
+        -e DB_NAME='testdb' \
+        -e RPC_SECRET='abcd1234' \
+        -v dbtest:/mnt/pyql-db-endpoint \
+        joshjamison/aiopyql-rpc-endpoint:latest
+<br>
+
+    # client.py
+
+    import asyncio
+    from easyrpc.tools.database import EasyRpcProxyDatabase
+
+    async def main():
+
+        db = await EasyRpcProxyDatabase.create(
+            'localhost', 
+            8190, 
+            '/ws/testdb', 
+            server_secret='abcd1234',
+            namespace='testdb'
+        )
+
+        create_table_result = await db.create_table(
+            'keystore',
+            [
+                ['key', 'str', 'UNIQUE NOT NULL'],
+                ['value', 'str']
+            ],
+            prim_key='key',
+            cache_enabled=True
+        )
+        print(f"create_table_result: {create_table_result}")
+
+        show_tables = await db.show_tables()
+
+        print(f"show tables: {show_tables}")
+
+        query = 'select * from sqlite_master'
+        run_query = await db.run(query)
+
+        print(f"run_query results: {run_query}")
+
+        keystore = db.tables['keystore']
+
+        # insert
+        await keystore.insert(
+            **{'key': 'new_key', 'value': 'new_value'}
+        )
+
+        # update
+        await keystore.update(
+            value='updated_value',
+            where={'key': 'new_key'}
+        )
+
+        # delete
+        await keystore.delete( 
+            where={'key': 'new_key'}
+        )
+
+        # select
+        selection = await keystore.select( 
+            '*',
+            where={'key': 'new_key'}
+        )
+        print(f"selection: {selection}")
+
+    asyncio.run(main())
+
 
 
 ## Clustering / EasyRpcServer Chaining / Namespacing 
 An EasyRpcServer can register functions in multiple namespaces, if unspecified 'Default' is used. 
-<br>
+<br
 
     easy_server = EasyRpcServer(server, '/ws/easy', server_secret='abcd1234')
 
@@ -363,7 +464,7 @@ Servers A, B or C can now be accessed via a Proxy to use a_func, b_func, or c_fu
 
 
 
-#### Constraints:
+#### Cluster Constraints:
 - An EasyRpcServer instance may connect up to 1 other EasyRpcServer instance by creating a server_proxy per namespace. The target instance should not be a child of the instance connecting(i.e loop)
 - An EasyRpcServer can recive n connections from other EasyRpcServer server proxies into a single namespace. 
 
@@ -544,7 +645,7 @@ A standard proxy connection provides access to 1 namespace, Namespace Groups can
     )
 
 ## Under the hood 
-easyrpc is made easy via [fastapi](https://github.com/tiangolo/fastapi) for handling server side websocket communciation, [aiohttp](https://github.com/aio-libs/aiohttp) ClientSessions for the client-side websocket communication,  [makefun](https://github.com/smarie/python-makefun) along with some standard library 'inspect' magic  for translating origin functions into proxy-useable functions with parameter validation, and lastly [pyjwt](https://github.com/jpadilla/pyjwt) for authentication & encryption.
+easyrpc uses [fastapi](https://github.com/tiangolo/fastapi) for handling server side websocket communciation, [aiohttp](https://github.com/aio-libs/aiohttp) ClientSessions for the client-side websocket communication,  [makefun](https://github.com/smarie/python-makefun) along with some standard library 'inspect' magic  for translating origin functions into proxy-useable functions with parameter validation, and lastly [pyjwt](https://github.com/jpadilla/pyjwt) for authentication & encryption.
 
 Registered functions are made available as callables which return co-routines and thus 'awaitable' to the remote-endpoints, this is true for both async and non-async registered functions. Due to this, the functions must be awaited within a running event_loop. When called, the input parameters are verified via the origin functions signature. 
 
