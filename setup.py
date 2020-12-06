@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
 setuptools.setup(
      name='easyrpc',  
      version='PYQLVERSION',
-     packages=setuptools.find_packages(include=['easyrpc'], exclude=['build']),
+     packages=setuptools.find_packages(include=['easyrpc', 'easyrpc.tools'], exclude=['build']),
      author="Joshua Jamison",
      author_email="joshjamison1@gmail.com",
      description="An easy to use rpc framework for enabling fast inter-process, inter-host communication",
