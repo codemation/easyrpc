@@ -4,6 +4,10 @@ from easyrpc.proxy import EasyRpcProxy
 class ProxyTable:
     def __init__(self, methods: dict):
         self.methods = methods
+    def __getitem__(self, key_val):
+        return self.methods['get_item'](key_val)
+    async def set_item(self, key, values):
+        return await self.methods['set_item'](key, values)
     async def insert(self, **kw):
         return await self.methods['insert'](**kw)
     async def update(self, where: dict = {}, **kw):
