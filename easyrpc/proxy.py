@@ -107,6 +107,7 @@ class EasyRpcProxy:
         encryption_enabled = False,
         server = None,
         loop=None,
+        logger: logging.Logger = None,
         debug: bool = False,
         ssl_verify: bool = True,
     ):
@@ -123,6 +124,7 @@ class EasyRpcProxy:
             encryption_enabled,
             server=server,
             loop=loop,
+            logger=logger,
             debug=debug,
             ssl_verify=ssl_verify,
         )
