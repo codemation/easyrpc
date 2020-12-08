@@ -2,7 +2,8 @@ import asyncio
 from easyrpc.proxy import EasyRpcProxy
 
 class ProxyTable:
-    def __init__(self, methods: dict):
+    def __init__(self, name, methods: dict):
+        self.name = name
         self.methods = methods
         self.prim_key = None
 
@@ -13,7 +14,7 @@ class ProxyTable:
     async def get_schema(self):
         schema = await self.methods['get_schema']()
         if not self.prim_key:
-            self.prim_key = schema['prim_key']
+            self.prim_key = schema[self.name]['prim_key']
         return schema
     async def insert(self, **kw):
         return await self.methods['insert'](**kw)
@@ -70,7 +71,7 @@ class EasyRpcProxyDatabase(EasyRpcProxy):
                 table_methods = {}
                 for method in {'insert', 'update', 'select', 'delete', 'get_schema', 'get_item', 'set_item'}:
                     table_methods[method] = self[f'{table}_{method}']
-                self.tables[table] = ProxyTable(table_methods)
+                self.tables[table] = ProxyTable(table, table_methods)
                 await self.tables[table].get_schema()
     async def _cron_refresh_tables(self):
         while True:
