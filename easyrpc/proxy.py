@@ -81,7 +81,8 @@ class EasyRpcProxy:
                 self.get_downstream_registered_functions,
                 30
             )
-        
+    def __contains__(self, func):
+        return func in self.proxy_funcs
     def __getitem__(self, func):
         if func in self.proxy_funcs:
             return self.proxy_funcs[func]
