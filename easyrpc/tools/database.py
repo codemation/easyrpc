@@ -4,12 +4,17 @@ from easyrpc.proxy import EasyRpcProxy
 class ProxyTable:
     def __init__(self, methods: dict):
         self.methods = methods
+        self.prim_key = None
+
     def __getitem__(self, key_val):
         return self.methods['get_item'](key_val)
     async def set_item(self, key, values):
         return await self.methods['set_item'](key, values)
     async def get_schema(self):
-        return await self.methods['get_schema']()
+        schema = await self.methods['get_schema']()
+        if not self.prim_key:
+            self.prim_key = schema['prim_key']
+        return schema
     async def insert(self, **kw):
         return await self.methods['insert'](**kw)
     async def update(self, where: dict = {}, **kw):
@@ -66,6 +71,7 @@ class EasyRpcProxyDatabase(EasyRpcProxy):
                 for method in {'insert', 'update', 'select', 'delete', 'get_schema', 'get_item', 'set_item'}:
                     table_methods[method] = self[f'{table}_{method}']
                 self.tables[table] = ProxyTable(table_methods)
+                await self.tables[table].get_schema()
     async def _cron_refresh_tables(self):
         while True:
             try:
