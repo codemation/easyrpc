@@ -63,7 +63,6 @@ class EasyRpcProxyDatabase(EasyRpcProxy):
         return await self['run'](query)
 
     async def refresh_tables(self):
-        self.tables = dict()
         tables = await self.show_tables()
     
         for table in tables:
@@ -73,6 +72,12 @@ class EasyRpcProxyDatabase(EasyRpcProxy):
                     table_methods[method] = self[f'{table}_{method}']
                 self.tables[table] = ProxyTable(table, table_methods)
                 await self.tables[table].get_schema()
+
+        # remove tables no longer visible 
+        for table in self.tables:
+            if not table in tables:
+                del self.tables[table]
+                
     async def _cron_refresh_tables(self):
         while True:
             try:
