@@ -8,6 +8,8 @@ class ProxyTable:
         return self.methods['get_item'](key_val)
     async def set_item(self, key, values):
         return await self.methods['set_item'](key, values)
+    async def get_schema(self):
+        return await self.methods['get_schema']()
     async def insert(self, **kw):
         return await self.methods['insert'](**kw)
     async def update(self, where: dict = {}, **kw):
