@@ -35,7 +35,6 @@ class EasyRpcProxyDatabase(EasyRpcProxy):
         columns: list, 
         prim_key: str,
         **kw
-
         ):
         result = await self['create_table'](
             name=name, 
@@ -62,7 +61,7 @@ class EasyRpcProxyDatabase(EasyRpcProxy):
         for table in tables:
             if not table in self.tables:
                 table_methods = {}
-                for method in {'insert', 'update', 'select', 'delete', 'get_schema'}:
+                for method in {'insert', 'update', 'select', 'delete', 'get_schema', 'get_item', 'set_item'}:
                     table_methods[method] = self[f'{table}_{method}']
                 self.tables[table] = ProxyTable(table_methods)
     async def _cron_refresh_tables(self):
