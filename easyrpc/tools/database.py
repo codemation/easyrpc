@@ -14,7 +14,7 @@ class ProxyTable:
     async def get_schema(self):
         schema = await self.methods['get_schema']()
         if not self.prim_key:
-            self.prim_key = schema[self.name]['prim_key']
+            self.prim_key = schema[self.name]['primary_key']
         return schema
     async def insert(self, **kw):
         return await self.methods['insert'](**kw)
