@@ -25,6 +25,7 @@ class ProxyTable:
     async def delete(self, where: dict = {}):
         if len(where) == 0 or not isinstance(where, dict):
             raise Exception(f"expected key-value for where")
+        return await self.methods['update'](where=where, **kw)
     async def select(self, *args, **kw):
         return await self.methods['select'](*args, **kw)
 
