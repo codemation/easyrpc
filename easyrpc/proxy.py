@@ -281,7 +281,7 @@ class EasyRpcProxy:
                 'id': self.session_id, 
                 'namespace': self.namespace
                 }
-            setup = encode(self.server_secret, **setup)
+            setup = encode(self.server_secret, **setup, log=self.log)
             session = await self.get_endpoint_sessions()
 
             if 'http' in self.origin_host:
@@ -437,6 +437,7 @@ class EasyRpcProxy:
                
                 # send inital auth token
                 try:
+                    self.log.debug(f"setup sending: {setup}")
                     await ws.send_json({'setup': setup})
                     setup_response = await ws.receive()
                     self.log.debug(f"setup response: {setup_response}")
