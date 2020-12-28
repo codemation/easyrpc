@@ -17,5 +17,5 @@ setuptools.setup(
          "Operating System :: OS Independent",
      ],
      python_requires='>=3.7, <4',   
-     install_requires=['makefun', 'pyjwt', 'fastapi', 'uvicorn', 'websockets', 'aiohttp'],
+     install_requires=['makefun==1.9.5', 'PyJWT==2.0.0', 'fastapi', 'uvicorn', 'websockets', 'aiohttp'],
  )

@@ -1,5 +1,6 @@
-makefun
+makefun==1.9.5
 fastapi
 uvicorn
-pyjwt
+aiohttp
+PyJWT==2.0.0
 websockets
