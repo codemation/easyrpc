@@ -573,7 +573,26 @@ class EasyRpcServer:
                         group_functions[k] = v
             self.log.debug(f"GET group functions: {group_functions}")
             return group_functions
-        if not namespace in self.namespaces:
+
+        proxy_funcs = {}
+        try:
+            if namespace in self.server_proxies:
+                for proxy_name, proxy in self.server_proxies[namespace].items():
+                    proxy_funcs[proxy_name] = await proxy.get_all_registered_functions()
+        except Exception as e:
+            self.log.exception(f"error checking proxy_funcs within __getitem__")
+        
+        local_funcs = {}
+        if namespace in self.namespaces:
+            local_funcs = self.get_all_registered_functions(namespace)
+        
+        for proxy, p_funcs in proxy_funcs.items():
+            for func_name in p_funcs:
+                if not func_name in local_funcs:
+                    local_funcs[func_name] = p_funcs[func_name]
+        if len(local_funcs) == 0:
             raise IndexError(f"no namespace with name {namespace}")
-        return self.get_all_registered_functions(namespace)
+        return local_funcs
+
+        
     
