@@ -203,6 +203,7 @@ class EasyRpcProxy:
                         get_proxy(self, f_name)
                     )
                 self.origin(self.proxy_funcs[f_name], namespace=namespace)
+        return self.proxy_funcs
     async def get_downstream_registered_functions(self):
         return await self.get_namespace_functions(upstream=False)
 
