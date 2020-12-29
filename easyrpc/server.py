@@ -170,6 +170,7 @@ class EasyRpcServer:
             namespaces = [namespace] if not namespace in self.namespace_groups else list(self.namespace_groups[namespace])
             for n_space in namespaces:
                 self.server_proxies[n_space][new_proxy.session_id] = new_proxy
+        return new_proxy
     def create_namespace_group(self, group_name: str, *namespaces):
         """
         group two or more namespaces into a single reference space. Functions are not 
