@@ -540,9 +540,11 @@ class EasyRpcServer:
 
         # single namespaces    
         self.log.debug(f"get_registered_functions: ns {namespace}, upstream {upstream} cfg {cfg} trigger: {trigger} af {all_functions}")
-        local_funcs = [
-            {f: self.namespaces[namespace][f][cfg]} for f in self.namespaces[namespace] if namespace in self.namespaces
-        ]
+        local_funcs = []
+        if namespace in self.namespaces:
+            local_funcs = [
+                {f: self.namespaces[namespace][f][cfg]} for f in self.namespaces[namespace]
+            ]
         if upstream and namespace in self.server_proxies:
             local_funcs += self.get_parent_registered_functions(namespace, cfg=cfg, trigger=trigger)
         if all_functions or not upstream:
