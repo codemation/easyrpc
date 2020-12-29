@@ -469,8 +469,8 @@ class EasyRpcServer:
 
 
             if response_expected:
-                self.log.debug(f"server_request: result {result}")
                 result = await self.server_requests[request_id].get()
+                self.log.debug(f"server_request: result {result}")
                 if not result:
                     return result
                 if 'GENERATOR_START' in result:
