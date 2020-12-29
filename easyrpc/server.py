@@ -578,7 +578,7 @@ class EasyRpcServer:
         try:
             if namespace in self.server_proxies:
                 for proxy_name, proxy in self.server_proxies[namespace].items():
-                    proxy_funcs[proxy_name] = await proxy.get_all_registered_functions()
+                    proxy_funcs[proxy_name] = proxy.proxy_funcs
         except Exception as e:
             self.log.exception(f"error checking proxy_funcs within __getitem__")
         
