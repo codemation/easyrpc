@@ -198,11 +198,14 @@ class EasyRpcProxy:
             self.namespaces[namespace] = {}
             for func in config['funcs']:
                 for f_name, cfg in func.items():
+                    if f_name in self.proxy_funcs:
+                        continue
                     self.proxy_funcs[f_name] = create_proxy_from_config(
                         cfg,
                         get_proxy(self, f_name)
                     )
-                self.origin(self.proxy_funcs[f_name], namespace=namespace)
+                    self.origin(self.proxy_funcs[f_name], namespace=namespace)
+                    
         return self.proxy_funcs
     async def get_downstream_registered_functions(self):
         return await self.get_namespace_functions(upstream=False)
