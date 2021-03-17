@@ -18,7 +18,7 @@ class Origin:
             if self.obj.kind == 'SERVER' and namespace in self.obj.namespace_groups:
                 namespaces = list(self.obj.namespace_groups[namespace])
             for n_space in namespaces:
-                self.obj.log.warning(f"ORIGIN - registered function {func.__name__} in {n_space} namespace")
+                self.obj.log.debug(f"ORIGIN - registered function {func.__name__} in {n_space} namespace")
                 function = self._register(func, namespace=n_space)
             return function
         if not func:
