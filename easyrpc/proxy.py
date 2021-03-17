@@ -110,7 +110,7 @@ class EasyRpcProxy:
         loop=None,
         logger: logging.Logger = None,
         debug: bool = False,
-        ssl_verify: bool = True,
+        ssl_verify: bool = False,
     ):
         proxy = cls(
             origin_host, 
