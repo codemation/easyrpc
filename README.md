@@ -4,7 +4,7 @@ An easy to use rpc framework for enabling fast inter-process, inter-container, o
 
 Easily share functions between hosts, processes, containers without the complexity of defining non-native python types or proxy modules.
 
-[![Documentation Status](https://readthedocs.org/projects/easyrpc/badge/?version=latest)](https://easyrpc.readthedocs.io/en/latest/?badge=latest) [![PyPI version](https://badge.fury.io/py/easyrpc.svg)](https://badge.fury.io/py/easyrpc)
+[![Documentation Status](https://readthedocs.org/projects/easyrpc/badge/?version=latest)](https://easyrpc.readthedocs.io/en/latest/?badge=latest) [![PyPI version](https://badge.fury.io/py/easyrpc.svg)](https://pypi.org/project/easyrpc/)
 
 ## Documentation
 [easyrpc.readthedocs.io](https://easyrpc.readthedocs.io)
