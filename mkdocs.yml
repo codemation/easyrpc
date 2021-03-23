@@ -1,0 +1,17 @@
+site_name: EasyRpc
+theme: readthedocs
+markdown_extensions:
+  - admonition
+nav:
+  - Home: index.md
+  - Key Features & Use Cases: features_use_case.md
+  - Quick Start: quick_start.md
+  - Recipies: recipies.md
+  - Usage: usage.md
+  - Generators: generators.md
+  - Loggers: loggers.md
+  - Shared Database: shared_database.md
+  - Namespacing: namspacing.md
+  - Clustering: clustering.md
+  - Under the Hood: under_the_hood.md
+  - Supported Features: supported_features.md

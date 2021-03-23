@@ -1,8 +1,10 @@
-# EasyRpc
+![](./docs/images/logo.png)
 
 An easy to use rpc framework for enabling fast inter-process, inter-container, or inter-host communication
 
 Easily share functions between hosts, processes, containers without the complexity of defining non-native python types or proxy modules.
+
+[![PyPI version](https://badge.fury.io/py/easyrpc.svg)](https://badge.fury.io/py/easyrpc) 
 
 ## Key Features
 - No predefined proxy functions at the remote endpoints
