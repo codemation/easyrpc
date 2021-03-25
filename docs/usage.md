@@ -1,6 +1,9 @@
-## Basic Usage:
+## Usage
 
 ### Basic
+
+![](./images/rpc-basic.png)
+
 #### EasyRpcServer
 ```python
 # server.py
@@ -45,6 +48,7 @@ async def main():
 asyncio.run(main())
 ```
 ### Multiple Namespaces
+![](./images/mutli-namespace.png)
 
 #### EasyRpcServer
     # server.py

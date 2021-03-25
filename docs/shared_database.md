@@ -21,7 +21,7 @@ Database connections, table model logic & querries can be shared via easyrpc fra
     
     All applications connected via the EasyRpcProxyDatabase() namespace, have access to new & existing tables, query cache.
 
-#### Example: 
+
 Shared aiopyql database & EasyRpcProxyDatabase
 
 ```bash

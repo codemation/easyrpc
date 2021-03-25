@@ -8,6 +8,9 @@ EasyRpcServer namepaces can be grouped together with other EasyRpcServer instanc
 - Access to all functions anywhere in a chain
 
 ### Cluster Example
+
+![](./images/cluster.png)
+
 #### Server A
 ```python
 # Server A - port 8220
@@ -113,11 +116,17 @@ async def main():
 ### Clustering Patterns
 
 #### Chaining
+
+![](./images/chain.png)
+
 ```bash
 A(pub) <-- B(pub) <-- C(pub) <-- D(pub)
 ```
 
 #### Forking
+
+![](./images/forking.png)
+
 ```bash
 A(pub) <-- B(pub)
 A(pub) <-- C(pub)
@@ -125,6 +134,9 @@ A(pub) <-- D(pub)
 ```
 
 #### Ring
+
+![](./images/ring.png)
+
 ```python
 A(left) <-- B(left) <-- C(left)
 A(right) --> C(right) --> B(right)
