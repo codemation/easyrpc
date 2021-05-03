@@ -86,5 +86,5 @@ class EasyRpcProxyDatabase(EasyRpcProxy):
             except Exception as e:
                 if isinstance(e, asyncio.CancelledError):
                     break
-                self.log.exception(f"error during _cron_refresh_tables")
+                self.log.error(f"error during _cron_refresh_tables - {repr(e)}")
             await asyncio.sleep(10)
