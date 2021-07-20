@@ -1,7 +1,7 @@
 name: Test EasyRpc Core Functionality
 on: ['pull_request']
 jobs:
-  test_easyrpc_core_3.7:
+  test_easyrpc_core_37:
     # Containers must run in Linux based operating systems
     runs-on: ubuntu-latest
     # Docker Hub image that `container-job` executes in
@@ -25,8 +25,8 @@ jobs:
       - name: Test EasyRpc Core Functionality
         run: |
           pytest tests/test_core.py
-  test_easyrpc_cluster_1_3.7:
-    needs: test_easyrpc_core_3.7
+  test_easyrpc_cluster_1_37:
+    needs: test_easyrpc_core_37
     # Containers must run in Linux based operating systems
     runs-on: ubuntu-latest
     # Docker Hub image that `container-job` executes in
@@ -50,8 +50,8 @@ jobs:
       - name: Test EasyRpc Cluster Functionality - 1
         run: |
           pytest tests/test_clustering_1.py
-  test_easyrpc_cluster_2_3.7:
-    needs: test_easyrpc_cluster_1_3.7
+  test_easyrpc_cluster_2_37:
+    needs: test_easyrpc_cluster_1_37
     # Containers must run in Linux based operating systems
     runs-on: ubuntu-latest
     # Docker Hub image that `container-job` executes in
@@ -75,8 +75,8 @@ jobs:
       - name: Test EasyRpc Cluster Functionality - 2
         run: |
           pytest tests/test_clustering_2.py
-  test_easyrpc_cluster_3_3.7:
-    needs: test_easyrpc_cluster_2_3.7
+  test_easyrpc_cluster_3_37:
+    needs: test_easyrpc_cluster_2_37
     # Containers must run in Linux based operating systems
     runs-on: ubuntu-latest
     # Docker Hub image that `container-job` executes in
@@ -100,8 +100,8 @@ jobs:
       - name: Test EasyRpc Cluster Functionality - 3
         run: |
           pytest tests/test_clustering_3.py
-  test_easyrpc_core_3.8:
-    needs: test_easyrpc_3.7_cluster_3
+  test_easyrpc_core_38:
+    needs: test_easyrpc_37_cluster_3
     # Containers must run in Linux based operating systems
     runs-on: ubuntu-latest
     # Docker Hub image that `container-job` executes in
@@ -125,8 +125,8 @@ jobs:
       - name: Test EasyRpc Core Functionality
         run: |
           pytest tests/test_core.py
-  test_easyrpc_cluster_1_3.8:
-    needs: test_easyrpc_core_3.8
+  test_easyrpc_cluster_1_38:
+    needs: test_easyrpc_core_38
     # Containers must run in Linux based operating systems
     runs-on: ubuntu-latest
     # Docker Hub image that `container-job` executes in
@@ -150,8 +150,8 @@ jobs:
       - name: Test EasyRpc Cluster Functionality - 1
         run: |
           pytest tests/test_clustering_1.py
-  test_easyrpc_cluster_2_3.8:
-    needs: test_easyrpc_cluster_1_3.8
+  test_easyrpc_cluster_2_38:
+    needs: test_easyrpc_cluster_1_38
     # Containers must run in Linux based operating systems
     runs-on: ubuntu-latest
     # Docker Hub image that `container-job` executes in
@@ -175,8 +175,8 @@ jobs:
       - name: Test EasyRpc Cluster Functionality - 2
         run: |
           pytest tests/test_clustering_2.py
-  test_easyrpc_cluster_3_3.8:
-    needs: test_easyrpc_cluster_2_3.8
+  test_easyrpc_cluster_3_38:
+    needs: test_easyrpc_cluster_2_38
     # Containers must run in Linux based operating systems
     runs-on: ubuntu-latest
     # Docker Hub image that `container-job` executes in
@@ -200,8 +200,8 @@ jobs:
       - name: Test EasyRpc Cluster Functionality - 3
         run: |
           pytest tests/test_clustering_3.py
-  test_easyrpc_core_3.9:
-    needs: test_easyrpc_3.8_cluster_3
+  test_easyrpc_core_39:
+    needs: test_easyrpc_cluster_3_38
     # Containers must run in Linux based operating systems
     runs-on: ubuntu-latest
     # Docker Hub image that `container-job` executes in
@@ -225,8 +225,8 @@ jobs:
       - name: Test EasyRpc Core Functionality
         run: |
           pytest tests/test_core.py
-  test_easyrpc_cluster_1_3.9:
-    needs: test_easyrpc_core_3.9
+  test_easyrpc_cluster_1_39:
+    needs: test_easyrpc_core_39
     # Containers must run in Linux based operating systems
     runs-on: ubuntu-latest
     # Docker Hub image that `container-job` executes in
@@ -250,8 +250,8 @@ jobs:
       - name: Test EasyRpc Cluster Functionality - 1
         run: |
           pytest tests/test_clustering_1.py
-  test_easyrpc_cluster_2_3.9:
-    needs: test_easyrpc_cluster_1_3.9
+  test_easyrpc_cluster_2_39:
+    needs: test_easyrpc_cluster_1_39
     # Containers must run in Linux based operating systems
     runs-on: ubuntu-latest
     # Docker Hub image that `container-job` executes in
@@ -275,8 +275,8 @@ jobs:
       - name: Test EasyRpc Cluster Functionality - 2
         run: |
           pytest tests/test_clustering_2.py
-  test_easyrpc_cluster_3_3.9:
-    needs: test_easyrpc_cluster_2_3.9
+  test_easyrpc_cluster_3_39:
+    needs: test_easyrpc_cluster_2_39
     # Containers must run in Linux based operating systems
     runs-on: ubuntu-latest
     # Docker Hub image that `container-job` executes in
