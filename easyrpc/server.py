@@ -1,6 +1,5 @@
 import asyncio
-import uuid, time, json, os
-from typing import Callable, Optional
+import uuid, json, pickle
 import logging
 from concurrent.futures._base import CancelledError
 
@@ -248,6 +247,16 @@ class EasyRpcServer:
             decoded_id = setup['id']
             namespace = setup['namespace']
             session_id = setup['id']
+            serialization = setup['serialization']
+            if serialization == 'json':
+                ws_send = websocket.send_json
+                serialize = json.dumps
+                deserialize = json.loads
+            else:
+                ws_send = websocket.send_bytes
+                serialize = pickle.dumps
+                deserialize = pickle.loads
+
 
             self.connection_manager.store_connect(decoded_id, websocket)
 
@@ -269,8 +278,10 @@ class EasyRpcServer:
                             except asyncio.QueueEmpty:
                                 empty = True
                                 continue
-                        self.log.debug(f"ws_sender - request: {request}")
-                        await websocket.send_json(request)
+                        self.log.warning(f"ws_sender - request: {request}")
+                        if serialization == 'pickle':
+                            request = serialize(request)
+                        await ws_send(request)
                 except Exception as e:
                     if not isinstance(e, CancelledError):
                         self.log.exception(f"error with ws_sender")
@@ -280,13 +291,16 @@ class EasyRpcServer:
                 try:
                     while True:
                         message = await websocket.receive()
+                        self.log.warning(f"server received message: {message}")
                         if 'text' in message and 'ping' in message['text']:
                             await self.server_send_queue[decoded_id].put({'pong': 'pong'})
                         
                         if message['type'] == 'websocket.disconnect':
                             raise WebSocketDisconnect
 
-                        message = json.loads(message['text'])
+                        message = message['text'] if 'text' in message else message['bytes']
+                        message = deserialize(message)
+
                         self.log.debug(f"received message: {message}")
 
                         if 'ws_action' in message:  

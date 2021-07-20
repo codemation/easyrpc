@@ -1,0 +1,136 @@
+name: Package
+on:
+  push:
+    branches:
+      - main
+jobs:
+  test_easyrpc_core:
+    # Containers must run in Linux based operating systems
+    runs-on: ubuntu-latest
+    # Docker Hub image that `container-job` executes in
+    #container: joshjamison/python38:latest
+    strategy:
+      matrix:
+        python-version: [3.7,3.8,3.9]
+    steps:
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      # Downloads a copy of the code in your repository before running CI tests
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          pip install pytest requests pytest-asyncio
+      - name: Test EasyRpc Core Functionality
+        run: |
+          pytest tests/test_core.py
+  test_easyrpc_cluster_1:
+    # Containers must run in Linux based operating systems
+    needs: test_easyrpc_core
+    runs-on: ubuntu-latest
+    # Docker Hub image that `container-job` executes in
+    #container: joshjamison/python38:latest
+    strategy:
+      matrix:
+        python-version: [3.7,3.8,3.9]
+    steps:
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      # Downloads a copy of the code in your repository before running CI tests
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          pip install pytest requests pytest-asyncio
+      - name: Test EasyRpc Cluster Functionality - 1
+        run: |
+          pytest tests/test_clustering_1.py
+  test_easyrpc_cluster_2:
+    needs: test_easyrpc_cluster_1
+    # Containers must run in Linux based operating systems
+    runs-on: ubuntu-latest
+    # Docker Hub image that `container-job` executes in
+    #container: joshjamison/python38:latest
+    strategy:
+      matrix:
+        python-version: [3.7,3.8,3.9]
+    steps:
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      # Downloads a copy of the code in your repository before running CI tests
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          pip install pytest requests pytest-asyncio
+      - name: Test EasyRpc Cluster Functionality - 2
+        run: |
+          pytest tests/test_clustering_2.py
+  test_easyrpc_cluster_3:
+    needs: test_easyrpc_cluster_2
+    # Containers must run in Linux based operating systems
+    runs-on: ubuntu-latest
+    # Docker Hub image that `container-job` executes in
+    #container: joshjamison/python38:latest
+    strategy:
+      matrix:
+        python-version: [3.7,3.8,3.9]
+    steps:
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      # Downloads a copy of the code in your repository before running CI tests
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          pip install pytest requests pytest-asyncio
+      - name: Test EasyRpc Cluster Functionality - 3
+        run: |
+          pytest tests/test_clustering_3.py
+  package:
+    name: Package easyrpc for PyPI
+    needs: test_easyrpc_cluster_3
+    runs-on: ubuntu-latest
+    steps:
+      # Downloads a copy of the code in your repository before running CI tests
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Install Packaging dependencies
+        run: |
+          pip install wheel twine
+
+      - name: Package & Test PyPI Installation
+        run: |
+          export NEXTVERSION=$(pip -qqq download easyrpc && ls easyrpc*.whl | sed 's/-/" "/g' | awk '{print "(" $2 ")"}' |  python nextbuild.py)
+          sed -i 's/NEXTVERSION/'$NEXTVERSION'/g' setup.py
+          python setup.py bdist_wheel
+          export PYQL_PACKAGE=$(pwd)/dist/easyrpc-$NEXTVERSION-py3-none-any.whl
+          pip install $(echo -n $PYQL_PACKAGE)
+
+      - name: Upload to PyPi
+        env: # Or as an environment variable
+          PYPI: ${{ secrets.PYPI }}
+        run: |
+          export NEXTVERSION=$(pip -qqq download easyrpc && ls easyrpc*.whl | sed 's/-/" "/g' | awk '{print "(" $2 ")"}' |  python nextbuild.py)
+          export PYQL_PACKAGE=$(pwd)/dist/easyrpc-$NEXTVERSION-py3-none-any.whl
+          python -m twine upload $(pwd)/dist/easyrpc-$NEXTVERSION-py3-none-any.whl -u codemation -p $PYPI
