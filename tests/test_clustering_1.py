@@ -38,7 +38,7 @@ def manager():
 
 @pytest.mark.asyncio
 async def test_cluster_a(manager):
-    await asyncio.sleep(5)
+    await asyncio.sleep(10)
     # create basic proxy - call methods
     proxy = await EasyRpcProxy.create(
         SERVER, 
