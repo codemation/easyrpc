@@ -101,7 +101,7 @@ jobs:
         run: |
           pytest tests/test_clustering_3.py
   test_easyrpc_core_38:
-    needs: test_easyrpc_37_cluster_3
+    needs: test_easyrpc_cluster_3_37
     # Containers must run in Linux based operating systems
     runs-on: ubuntu-latest
     # Docker Hub image that `container-job` executes in
