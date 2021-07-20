@@ -1,4 +1,4 @@
-name: Test EasyRpc
+name: Test EasyRpc 3.7
 on: ['pull_request']
 jobs:
   test_easyrpc_core:
@@ -59,6 +59,7 @@ jobs:
     strategy:
       matrix:
         python-version: [3.7]
+      steps:
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
