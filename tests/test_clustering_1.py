@@ -1,5 +1,5 @@
 import asyncio
-import os
+import time
 import pytest
 import subprocess, signal
 from easyrpc.proxy import EasyRpcProxy
@@ -19,6 +19,7 @@ def server_manager():
     server_a_p = subprocess.Popen(
         f"uvicorn --host {SERVER} --port {SERVER_A_PORT} {SERVER_A}:server".split(' ')
     )
+    time.sleep(5)
     server_b_p = subprocess.Popen(
         f"uvicorn --host {SERVER} --port {SERVER_B_PORT} {SERVER_B}:server".split(' ')
     )
