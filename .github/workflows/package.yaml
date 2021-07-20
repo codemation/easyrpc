@@ -122,7 +122,7 @@ jobs:
       - name: Package & Test PyPI Installation
         run: |
           export NEXTVERSION=$(pip -qqq download easyrpc && ls easyrpc*.whl | sed 's/-/" "/g' | awk '{print "(" $2 ")"}' |  python nextbuild.py)
-          sed -i 's/NEXTVERSION/'$NEXTVERSION'/g' setup.py
+          sed -i 's/BUILD_VERSION/'$NEXTVERSION'/g' setup.py
           python setup.py bdist_wheel
           export PYQL_PACKAGE=$(pwd)/dist/easyrpc-$NEXTVERSION-py3-none-any.whl
           pip install $(echo -n $PYQL_PACKAGE)
