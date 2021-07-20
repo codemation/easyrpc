@@ -278,7 +278,7 @@ class EasyRpcServer:
                             except asyncio.QueueEmpty:
                                 empty = True
                                 continue
-                        self.log.warning(f"ws_sender - request: {request}")
+                        
                         if serialization == 'pickle':
                             request = serialize(request)
                         await ws_send(request)
@@ -291,7 +291,7 @@ class EasyRpcServer:
                 try:
                     while True:
                         message = await websocket.receive()
-                        self.log.warning(f"server received message: {message}")
+                        
                         if 'text' in message and 'ping' in message['text']:
                             await self.server_send_queue[decoded_id].put({'pong': 'pong'})
                         

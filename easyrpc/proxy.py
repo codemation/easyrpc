@@ -328,7 +328,6 @@ class EasyRpcProxy:
             try:
                 while True:
                     message = await ws.receive()
-                    self.log.warning(f"received message: {message}")
                     if message.data == None:
                         break
                     
@@ -634,7 +633,6 @@ class EasyRpcProxy:
                 result =  await self.requests[request_id].get()
                 if not result:
                     return result
-                self.log.warning(f"result: {result}")
                 if hasattr(result, '__contains__') and 'GENERATOR_START' in result:
                     generator_id = result['GENERATOR_START']
                     proxy_generator = await self.proxy_generator(request_id, generator_id)
