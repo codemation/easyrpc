@@ -8,6 +8,7 @@ from inspect import (
     _ParameterKind,
     iscoroutinefunction
 )
+import pickle
 from copy import deepcopy
 from collections import OrderedDict
 from makefun import create_function
@@ -70,9 +71,16 @@ def create_signature_from_dict(func_sig: dict):
             name, kind = sig_dict[k][pk]['name'], sig_dict[k][pk]['kind']
             default_or_annotations = {}
             for config in ('default', 'annotation'):
-                if config == 'annotation':
+                if config == 'annotation' and config in sig_dict[k][pk]:
+                    annotation = sig_dict[k][pk][config]
+                    default_or_annotations[config] = pickle.loads(annotation)
+                    """
+                    for allowed_type in {int, float, str, dict, list}:
+                        if str(allowed_type) == annotation:
+                             default_or_annotations[config] = allowed_type
+                    """
                     continue
-                if config in  sig_dict[k][pk]:
+                if config in sig_dict[k][pk]:
                     default_or_annotations[config] = sig_dict[k][pk][config]
 
             if len(default_or_annotations) > 0:
@@ -99,7 +107,8 @@ def get_signature_as_dict(f):
         if not par_item._default is _empty:
             pars_dict[par]['default'] = par_item._default
         if not par_item._annotation is _empty:
-            pars_dict[par]['annotation'] = str(par_item._annotation)
+            #pars_dict[par]['annotation'] = str(par_item._annotation)
+            pars_dict[par]['annotation'] = pickle.dumps(par_item._annotation)
     return {f.__name__: pars_dict}
 
 def get_origin_register(obj: object):
