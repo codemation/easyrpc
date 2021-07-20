@@ -530,21 +530,15 @@ class EasyRpcProxy:
             self.client_connections[self.session_id] = ws_client()
             try:
                 conn =  await self.client_connections[self.session_id].asend(None)
-                self.log.warning(
-                    f" started connection to server {self.origin_host}:{self.origin_port}"
-                )
                 return conn
             except StopAsyncIteration:
                 self.log.error(
-                    f"failed to start connection to server {self.origin_host}:{self.origin_port}"
+                    f"failed to create connection to server {self.origin_host}:{self.origin_port}"
                 )
             except Exception as e:
                 raise e
         try:
             conn = await self.client_connections[self.session_id].asend(None)
-            self.log.warning(
-                f"started connection to server {self.origin_host}:{self.origin_port}"
-            )
             return conn
         except StopAsyncIteration:
             await self.cleanup_proxy_session()
