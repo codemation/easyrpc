@@ -14,27 +14,19 @@ async def setup():
 
     @math_server.origin(namespace='basic_math')
     async def add(a: int, b: int):
-        result = a + b
-        print(f"{a} + {b} = {result}")
-        return {'sum': result}
+        return a + b
 
     @math_server.origin(namespace='basic_math')
     async def subtract(a, b):
-        result = a - b
-        print(f"{a} - {b} = {result}")
-        return {'diff': result}
+        return a-b
     
     @math_server.origin(namespace='basic_math')
     async def divide(a, b):
-        result = a / b
-        print(f"{a} / {b} = {result}")
-        return {'div': result}
+        return a / b
     
     @math_server.origin(namespace='basic_math')
     async def compare(a, b):
-        result = a == b
-        print(f"{a} == {b} = {result}")
-        return {'compare': result}
+        return a == b
 
     @math_server.origin(namespace='core')
     async def get_dict(a, b, c):

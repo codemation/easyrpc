@@ -47,19 +47,15 @@ async def test_core_functionality(manager):
     # basic function usage
     
     # int
-    result = await proxy['add'](1,2)
-    assert result['sum'] == 1 + 2 , f"expected sum result of {1+2}"
+    assert await proxy['add'](1,2) == 1 + 2 , f"expected sum result of {1+2}"
 
-    result = await proxy['subtract'](6,1)
-    assert result['diff'] == 6-1, f"expected subtract result of {6-1}"
+    assert await proxy['subtract'](6,1) == 6-1, f"expected subtract result of {6-1}"
     
     # float
-    result = await proxy['divide'](2,3)
-    assert result['div'] == 2/3, f"expected divide result of {2/3}"
+    assert await proxy['divide'](2,3) == 2/3, f"expected divide result of {2/3}"
 
     # bool
-    result = await proxy['compare']('a', 'a')
-    assert result, f"should be equal"
+    assert await proxy['compare']('a', 'a'), f"should be equal"
 
     core = await EasyRpcProxy.create(
         SERVER, 
@@ -68,7 +64,6 @@ async def test_core_functionality(manager):
         server_secret='abcd1234',
         namespace='core'
     )
-
 
     # dict
     result = await core['get_dict']('a', 'b', 'c')
