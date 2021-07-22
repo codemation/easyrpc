@@ -2,7 +2,7 @@ import asyncio
 import uuid, json, pickle
 import logging
 from concurrent.futures._base import CancelledError
-
+from typing import Iterable
 from fastapi import FastAPI
 from fastapi.websockets import WebSocket, WebSocketDisconnect
 
@@ -488,7 +488,7 @@ class EasyRpcServer:
                 self.log.debug(f"server_request: result {result}")
                 if not result:
                     return result
-                if 'GENERATOR_START' in result:
+                if hasattr(result, '__contains__') and 'GENERATOR_START' in result:
                     generator_id = result['GENERATOR_START']
                     await self.server_generator(client_id, request_id, generator_id)
                     return result
