@@ -1,8 +1,8 @@
-name: Package and Push to PyPI
+name: Test EasyRpc Core Functionality
 on:
   push:
-    tags:
-      - "*"
+    branches:
+      - main
 jobs:
   test_easyrpc_core:
     # Containers must run in Linux based operating systems
@@ -103,34 +103,3 @@ jobs:
       - name: Test EasyRpc Cluster Functionality - 3
         run: |
           pytest tests/test_clustering_3.py
-  package:
-    name: Package easyrpc for PyPI
-    needs: test_easyrpc_cluster_3
-    runs-on: ubuntu-latest
-    steps:
-      # Downloads a copy of the code in your repository before running CI tests
-      - name: Check out repository code
-        uses: actions/checkout@v2
-      - name: Setup Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.8
-      - name: Install Packaging dependencies
-        run: |
-          pip install wheel twine
-
-      - name: Package & Test PyPI Installation
-        run: |
-          export NEXTVERSION=$(pip -qqq download easyrpc && ls easyrpc*.whl | sed 's/-/" "/g' | awk '{print "(" $2 ")"}' |  python nextbuild.py)
-          sed -i 's/BUILD_VERSION/'$NEXTVERSION'/g' setup.py
-          python setup.py bdist_wheel
-          export PYQL_PACKAGE=$(pwd)/dist/easyrpc-$NEXTVERSION-py3-none-any.whl
-          pip install $(echo -n $PYQL_PACKAGE)
-
-      - name: Upload to PyPi
-        env: # Or as an environment variable
-          PYPI: ${{ secrets.PYPI }}
-        run: |
-          export NEXTVERSION=$(pip -qqq download easyrpc && ls easyrpc*.whl | sed 's/-/" "/g' | awk '{print "(" $2 ")"}' |  python nextbuild.py)
-          export PYQL_PACKAGE=$(pwd)/dist/easyrpc-$NEXTVERSION-py3-none-any.whl
-          python -m twine upload $(pwd)/dist/easyrpc-$NEXTVERSION-py3-none-any.whl -u codemation -p $PYPI
