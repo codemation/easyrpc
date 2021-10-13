@@ -18,47 +18,51 @@ Easily share functions between hosts, processes, containers without the complexi
 
 ## Quick Start
 
-    $ virtualenv -p python3.7 easy-rpc-env
+```bash
+$ virtualenv -p python3.7 easy-rpc-env
 
-    $ source easy-rpc-env/bin/activate
+$ source easy-rpc-env/bin/activate
 
-    (easy-rpc-env)$ pip install easyrpc
+(easy-rpc-env)$ pip install easyrpc
+```
 
 ## Basic Usage:
 
-    # server.py
-    from fastapi import FastAPI
-    from easyrpc.server import EasyRpcServer
+```python
+# server.py
+from fastapi import FastAPI
+from easyrpc.server import EasyRpcServer
 
-    server = FastAPI()
+server = FastAPI()
 
-    ws_server_a = EasyRpcServer(server, '/ws/server_a', server_secret='abcd1234')
+ws_server_a = EasyRpcServer(server, '/ws/server_a', server_secret='abcd1234')
 
-    @ws_server_a.origin(namespace='public')
-    def good_func_a(a, b, c):
-        print(f"good_func_a {a} {b} {c}")
-        return {"good_func_a": [a, b, c]}
+@ws_server_a.origin(namespace='public')
+def good_func_a(a, b, c):
+    print(f"good_func_a {a} {b} {c}")
+    return {"good_func_a": [a, b, c]}
+```
+```python
+# client.py
+import asyncio
+from easyrpc.proxy import EasyRpcProxy
 
-<br> 
+async def main():
+    proxy = await EasyRpcProxy.create(
+        '0.0.0.0', 
+        8090, 
+        '/ws/server_a', 
+        server_secret='abcd1234',
+        'namespace='public'
+    )
 
-    # client.py
-    import asyncio
-    from easyrpc.proxy import EasyRpcProxy
+    good_func_a = proxy['good_func_a']
+    result = await good_func_a(1, 5, 7)
+    print(result)
 
-    async def main():
-        proxy = await EasyRpcProxy.create(
-            '0.0.0.0', 
-            8090, 
-            '/ws/server_a', 
-            server_secret='abcd1234',
-            'namespace='public'
-        )
+asyncio.run(main())
+```
 
-        good_func_a = proxy['good_func_a']
-        result = await good_func_a(1, 5, 7)
-        print(result)
-
-    asyncio.run(main())
 ## Recipes
 See other usage examples in [Recipes](https://github.com/codemation/easyrpc/tree/main/recipes)
 - [basic](https://github.com/codemation/easyrpc/tree/main/recipes/basic)
