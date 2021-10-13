@@ -2,7 +2,7 @@
 easyrpc can proxy registered generators & async generators with the same constraints as registered functions.
 
 !!! NOTE Constraints
-    input arguments  / return values should be JSON serializable
+    input arguments  / return values should be pickable objects
 
 
 Like registered functions, normal generators are converted into async generators at the proxy and must be iterated over using 'async for' or await generator.asend(None)

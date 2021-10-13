@@ -14,7 +14,8 @@ Easily share functions between hosts, processes, containers without the complexi
 - Easily group and share functons among hosts / processes using Namespaces / Namespace Groups
 - Proxy functions parameters are validated as if defined locally.
 - Optional: pre-flight encyrption 
-- No strict RPC message structure / size limit, within json serializable constraints
+- No strict RPC message structure / size limit
+- Flexible parameter types within pickable constraint
 
 ## Quick Start
 
