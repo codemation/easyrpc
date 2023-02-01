@@ -636,17 +636,25 @@ class EasyRpcProxy:
 
                 del self.requests[request_id]
                 return result
+        allowed_retry = 5
+        retry_count = 0
+        retry_wait = 2
+        while True:
+            try:
+                return await make_request()
+            except Exception as e:
+                if type(e) in KNOWN_EXCEPTIONS:
+                    retry_count += 1
+                    if retry_count > allowed_retry:
+                        self.log.error(repr(e))
+                        raise e
+                    self.log.warn(e.__class__.__name__)
+                    self.log.warn(f"Error: {e.__class__.__name__}. Retrying in {retry_wait}sec, tentative {retry_count}/{allowed_retry}.")
+                    await asyncio.sleep(retry_wait)
+                else:
+                    self.log.exception("error with proxy_request")
+                    raise e
 
-        try:
-            return await make_request()
-        except Exception as e:
-            # retry 
-            if type(e) in KNOWN_EXCEPTIONS:
-                self.log.error(repr(e))
-            else:
-                self.log.exception("error with proxy_request")
-            raise e
-                
 def get_proxy(ws_proxy: EasyRpcProxy, func_name: str):
     async def proxy(*args, **kwargs):
         return await ws_proxy.proxy_request(
