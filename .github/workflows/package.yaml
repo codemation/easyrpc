@@ -33,4 +33,4 @@ jobs:
         run: |
           export NEXTVERSION=$(pip -qqq download easyrpc && ls easyrpc*.whl | sed 's/-/" "/g' | awk '{print "(" $2 ")"}' |  python nextbuild.py)
           export PYQL_PACKAGE=$(pwd)/dist/easyrpc-$NEXTVERSION-py3-none-any.whl
-          python -m twine upload $(pwd)/dist/easyrpc-$NEXTVERSION-py3-none-any.whl -u codemation -p $PYPI
+          python -m twine upload $(pwd)/dist/easyrpc-$NEXTVERSION-py3-none-any.whl -u __token__ -p $PYPI_TOKEN
