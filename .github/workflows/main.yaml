@@ -1,14 +1,14 @@
 name: Test EasyRpc Core Functionality
 on: ['pull_request']
 jobs:
-  test_easyrpc_core_37:
+  test_easyrpc_core_38:
     # Containers must run in Linux based operating systems
     runs-on: ubuntu-latest
     # Docker Hub image that `container-job` executes in
     #container: joshjamison/python38:latest
     strategy:
       matrix:
-        python-version: [3.7]
+        python-version: [3.8]
     steps:
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
@@ -25,15 +25,15 @@ jobs:
       - name: Test EasyRpc Core Functionality
         run: |
           pytest tests/test_core.py
-  test_easyrpc_cluster_1_37:
-    needs: test_easyrpc_core_37
+  test_easyrpc_cluster_1_38:
+    needs: test_easyrpc_core_38
     # Containers must run in Linux based operating systems
     runs-on: ubuntu-latest
     # Docker Hub image that `container-job` executes in
     #container: joshjamison/python38:latest
     strategy:
       matrix:
-        python-version: [3.7]
+        python-version: [3.8]
     steps:
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
@@ -50,15 +50,15 @@ jobs:
       - name: Test EasyRpc Cluster Functionality - 1
         run: |
           pytest tests/test_clustering_1.py
-  test_easyrpc_cluster_2_37:
-    needs: test_easyrpc_cluster_1_37
+  test_easyrpc_cluster_2_38:
+    needs: test_easyrpc_cluster_1_38
     # Containers must run in Linux based operating systems
     runs-on: ubuntu-latest
     # Docker Hub image that `container-job` executes in
     #container: joshjamison/python38:latest
     strategy:
       matrix:
-        python-version: [3.7]
+        python-version: [3.8]
     steps:
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
@@ -76,14 +76,14 @@ jobs:
         run: |
           pytest tests/test_clustering_2.py
   test_easyrpc_cluster_3_37:
-    needs: test_easyrpc_cluster_2_37
+    needs: test_easyrpc_cluster_2_38
     # Containers must run in Linux based operating systems
     runs-on: ubuntu-latest
     # Docker Hub image that `container-job` executes in
     #container: joshjamison/python38:latest
     strategy:
       matrix:
-        python-version: [3.7]
+        python-version: [3.8]
     steps:
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
@@ -101,7 +101,7 @@ jobs:
         run: |
           pytest tests/test_clustering_3.py
   test_easyrpc_core_38:
-    needs: test_easyrpc_cluster_3_37
+    needs: test_easyrpc_cluster_3_38
     # Containers must run in Linux based operating systems
     runs-on: ubuntu-latest
     # Docker Hub image that `container-job` executes in
