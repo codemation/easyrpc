@@ -155,7 +155,7 @@ class EasyRpcProxy:
 
     def run_cron(self, action, interval):
         async def cron():
-            self.log.warning(f"creating cron or {action.__name__} - interval {interval}")
+            self.log.debug(f"creating cron or {action.__name__} - interval {interval}")
             tasks = []
             while True:
                 try:
@@ -466,7 +466,7 @@ class EasyRpcProxy:
                     ws_sender = self.get_ws_sender(ws)
                     ws_receiver = self.get_ws_receiver(ws)
 
-                    self.log.warning(
+                    self.log.debug(
                         f"started connection to server {self.origin_host}:{self.origin_port}"
                     )
                     async def keep_alive():

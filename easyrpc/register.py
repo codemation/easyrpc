@@ -46,8 +46,8 @@ def create_proxy_from_config(config: dict, proxy: Callable):
             return await result
         return result
 
-    #__proxy__.__name__ = f"{config['name']}_proxy"
     __proxy__.__name__ = f"{config['name']}"
+    __proxy__.__doc__ = config.get('doc', '')
     nf = create_function(
         create_signature_from_dict(
             config['sig']
@@ -126,6 +126,7 @@ def get_origin_register(obj: object):
             obj.namespaces[namespace][f.__name__]['config'] = {
                 'sig': get_signature_as_dict(f),
                 'name': f.__name__,
+                'doc': f.__doc__,
                 'is_async': iscoroutinefunction(f)
             }
             obj.namespaces[namespace][f.__name__]['method'] = f

@@ -23,11 +23,11 @@ class ConnectionManager:
         return await websocket.accept()
 
     def store_connect(self, endpoint_id, websocket: WebSocket):
-        self.log.warning(f"created websocket connection with endpoint {endpoint_id}")
+        self.log.debug(f"created websocket connection with endpoint {endpoint_id}")
         self.active_connections[endpoint_id] = websocket
 
     def disconnect(self, endpoint_id: str):
-        self.log.warning(f"deleted websocket connection with endpoint {endpoint_id}")
+        self.log.debug(f"deleted websocket connection with endpoint {endpoint_id}")
         del self.active_connections[endpoint_id]
     async def broadcast(self, message: str):
         for connection in self.active_connections:
@@ -422,7 +422,7 @@ class EasyRpcServer:
                 await finished.get()
 
                 # child connection closed
-                self.log.warning(f"client websocket connection with id {decoded_id} finished")
+                self.log.debug(f"client websocket connection with id {decoded_id} finished")
                 
                 # check if child is server or proxy
                 if setup['type'] == 'SERVER':
