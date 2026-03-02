@@ -4,10 +4,9 @@ import logging
 import asyncio
 from traceback import format_exc 
 from concurrent.futures._base import CancelledError
-from aiohttp._websocket.models import WSMessage, WSMsgType
 
-from aiohttp import ClientSession
-import aiohttp
+from aiohttp import ClientSession, WSMessage, WSMsgType
+from aiohttp.client_exceptions import ClientConnectorError
 
 from easyrpc.register import (
     create_proxy_from_config, 
@@ -526,7 +525,7 @@ class EasyRpcProxy:
                 self.namespaces = {}
             except Exception as e:
                 if type(e) in {
-                    aiohttp.client_exceptions.ClientConnectorError, 
+                    ClientConnectorError, 
                     ConnectionRefusedError
                 }:
                     connection_error = ServerUnreachable(
