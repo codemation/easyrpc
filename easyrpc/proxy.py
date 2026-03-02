@@ -4,9 +4,11 @@ import logging
 import asyncio
 from traceback import format_exc 
 from concurrent.futures._base import CancelledError
+from aiohttp._websocket.models import WSMessage, WSMsgType
 
 from aiohttp import ClientSession
 import aiohttp
+
 from easyrpc.register import (
     create_proxy_from_config, 
     Coroutine, 
@@ -14,7 +16,7 @@ from easyrpc.register import (
     AsyncGenerator, 
     async_generator_asend
 )
-from easyrpc.auth import encode
+from easyrpc.auth import encode, decode
 from easyrpc.origin import Origin
 from easyrpc.generator import RpcGenerator
 from easyrpc.exceptions import (
@@ -250,6 +252,7 @@ class EasyRpcProxy:
             self.server.origin(func, namespace=self.namespace)
     
     async def cleanup_proxy_session(self):
+        self.log.warning(f"cleanup_proxy_session called")
         if not self.session_id in self.client_connections:
             return
         try:
@@ -328,6 +331,12 @@ class EasyRpcProxy:
             try:
                 while True:
                     message = await ws.receive()
+                    self.log.debug(f"ws_receiver got message: {message}")
+
+                    if message.type == WSMsgType.CLOSE:
+                        self.log.info(f"Server sent WSCLOSE")
+                        break
+
                     if message.data == None:
                         break
                     
@@ -335,7 +344,11 @@ class EasyRpcProxy:
                         if 'error' in message.data and not 'ws_action' in message.data:
                             break
 
-                    message = self.deserialize(message.data)
+                    self.log.info(message.data)
+                    try:
+                        message: WSMessage = self.deserialize(message.data)
+                    except Exception as e:
+                        self.log.warning(f"error deserializing message: {repr(e)} - message: {message.data}")
 
                     if not 'ws_action' in message:
                         continue
@@ -433,9 +446,9 @@ class EasyRpcProxy:
                             })
                         
             except Exception as e:
-                if not isinstance(e, CancelledError):
-                    self.log.exception(f"error with ws_receiver")
-            await self.cleanup_proxy_session()
+                self.log.info(f"ws_receiver exiting: reason - {repr(e)}")
+            finally:
+                await self.cleanup_proxy_session()
         return ws_receiver
     async def get_proxy_ws_session(self):
         """
