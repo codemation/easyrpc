@@ -34,6 +34,9 @@ def encode_json_value(v: Any) -> dict:
         if not all(isinstance(k, str) for k in v):
             raise TypeError("Only dict defaults/metadata with string keys are supported")
         return {"k": "dict", "v": {k: encode_json_value(x) for k, x in v.items()}}
+    # adds support for typer.Option default values, which are not JSON serializable but have a .default
+    if hasattr(v, 'default'):
+        return {"k": "prim", "v": v.default}
     raise TypeError(f"Value is not supported by this JSON codec: {v!r}")
 
 
