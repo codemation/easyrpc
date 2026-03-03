@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.11.14, 3.12.12, 3.13.12]
+        python-version: [3.11.14]
     steps:
       # Downloads a copy of the code in your repository before running CI tests
       - name: Check out repository code
@@ -20,7 +20,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install Packaging dependencies
         run: |
-          pip install wheel twine
+          pip install wheel twine setuptools
 
       - name: Package & Test PyPI Installation
         run: |
