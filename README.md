@@ -20,7 +20,7 @@ Easily share functions between hosts, processes, containers without the complexi
 ## Quick Start
 
 ```bash
-$ uv init --python ">=3.9"
+$ uv init --python ">=3.11"
 
 $ uv add easyrpc
 ```
