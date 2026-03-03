@@ -7,6 +7,9 @@ jobs:
   package:
     name: Package easyrpc for PyPI
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.11.14, 3.12.12, 3.13.12]
     steps:
       # Downloads a copy of the code in your repository before running CI tests
       - name: Check out repository code
@@ -14,7 +17,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
-          python-version: 3.8
+          python-version: ${{ matrix.python-version }}
       - name: Install Packaging dependencies
         run: |
           pip install wheel twine

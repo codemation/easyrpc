@@ -1,4 +1,4 @@
-import os, uuid, time, json, base64, jwt, string, random
+import jwt
 
 def encode(secret, log=None, **kw):
     try:

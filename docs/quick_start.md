@@ -1,8 +1,6 @@
 ## Installation
 ```bash
-$ virtualenv -p python3.7 easy-rpc-env
+$ uv init --python >=3.11
 
-$ source easy-rpc-env/bin/activate
-
-(easy-rpc-env)$ pip install easyrpc
+$ uv add easyrpc
 ```
