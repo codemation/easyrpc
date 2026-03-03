@@ -97,3 +97,29 @@ async def test_core_functionality(manager):
         assert isinstance(obj, SomethingComplex), f'expected object is of type SomethingComplex'
         assert obj.test == 'test', f"expected 'test'"
         assert obj.also == {'a': 1}, f"expected {{'a': 1}}"
+
+    # core & annotations
+    result = await core['annotations'](1, 'a', [1,2,3])
+
+    assert result[0] == 1, f"expected 1"
+    assert result[1] == 'a', f"expected 'a'"
+    assert result[2] == [1,2,3], f"expected {[1,2,3]}"
+    assert result[3] == None, f"expected None"
+
+    # bad input
+    with pytest.raises(TypeError):
+        await core['annotations']('a', 'd', (1,2,3))
+
+    with pytest.raises(TypeError):
+        await core['annotations'](1, 'd', (1,2,3))
+
+    with pytest.raises(TypeError):
+        await core['annotations'](1, 'c', (1,2,3))
+    
+    # enum test
+    assert await core['enum_test']('a') == 'a', f"expected 'a'"
+    assert await core['enum_test']('b') == 'b', f"expected 'b'"
+    assert await core['enum_test']('c') == 'c', f"expected 'c'"
+
+    with pytest.raises(TypeError):
+        await core['enum_test']('f')

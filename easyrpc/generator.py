@@ -1,5 +1,5 @@
 from typing import Optional
-from easyrpc.register import Generator, AsyncGenerator
+from easyrpc.register import  AsyncGenerator
 
 class RpcGenerator:
     def __init__(self, generator):

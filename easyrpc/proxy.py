@@ -2,7 +2,6 @@ import uuid, time, json
 import pickle
 import logging
 import asyncio
-from traceback import format_exc 
 from concurrent.futures._base import CancelledError
 
 from aiohttp import ClientSession, WSMessage, WSMsgType

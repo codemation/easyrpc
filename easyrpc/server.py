@@ -2,7 +2,6 @@ import asyncio
 import uuid, json, pickle
 import logging
 from concurrent.futures._base import CancelledError
-from typing import Iterable
 from fastapi import FastAPI
 from fastapi.websockets import WebSocket, WebSocketDisconnect
 

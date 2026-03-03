@@ -1,6 +1,5 @@
 from easyrpc.register import ( 
-    get_origin_register,
-    get_signature_as_dict   
+    get_origin_register
 )
 
 
