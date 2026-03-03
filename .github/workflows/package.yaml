@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.11, 3.12, 3.13]
+        python-version: [3.11.14, 3.12.12, 3.13.12]
     steps:
       # Downloads a copy of the code in your repository before running CI tests
       - name: Check out repository code
