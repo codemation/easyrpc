@@ -16,6 +16,6 @@ setuptools.setup(
          "License :: OSI Approved :: MIT License",
          "Operating System :: OS Independent",
      ],
-     python_requires='>=3.11, <4',   
+     python_requires='>=3.11.14, <4',   
      install_requires=['PyJWT==2.0.0', 'fastapi', 'uvicorn', 'websockets', 'aiohttp'],
  )
